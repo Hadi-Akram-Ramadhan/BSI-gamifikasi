@@ -1,0 +1,87 @@
+@import "tailwindcss";
+
+:root {
+  --bsi-teal: #00A39E;
+  --bsi-gold: #F39C12;
+  --bsi-teal-deep: #0B3835;
+  --bsi-green: #10B981;
+  --bsi-orange: #F97316;
+  --bsi-surface: #F4FBF9;
+
+  --background: #F4FBF9;
+  --foreground: #0B3835;
+}
+
+@theme inline {
+  --color-bsi-teal: var(--bsi-teal);
+  --color-bsi-gold: var(--bsi-gold);
+  --color-bsi-teal-deep: var(--bsi-teal-deep);
+  --color-bsi-green: var(--bsi-green);
+  --color-bsi-orange: var(--bsi-orange);
+  --color-bsi-surface: var(--bsi-surface);
+
+  --font-display: var(--font-fredoka), system-ui, sans-serif;
+  --font-body: var(--font-jakarta), system-ui, sans-serif;
+}
+
+body {
+  background-color: var(--bsi-surface);
+  color: var(--bsi-teal-deep);
+  font-family: var(--font-jakarta), system-ui, -apple-system, sans-serif;
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* 3D Tactile Physical Buttons for Classroom Buzzer Feel */
+.btn-3d-teal {
+  background-color: #00A39E;
+  color: #FFFFFF;
+  box-shadow: 0 6px 0 #007571;
+  transition: all 0.08s ease;
+}
+.btn-3d-teal:active:not(:disabled) {
+  transform: translateY(4px);
+  box-shadow: 0 2px 0 #007571;
+}
+
+.btn-3d-gold {
+  background-color: #F39C12;
+  color: #0B3835; /* WCAG AA: Deep Teal text for 5.87:1 contrast on gold */
+  box-shadow: 0 6px 0 #B9770E;
+  transition: all 0.08s ease;
+}
+.btn-3d-gold:active:not(:disabled) {
+  transform: translateY(4px);
+  box-shadow: 0 2px 0 #B9770E;
+}
+
+.btn-3d-green {
+  background-color: #10B981;
+  color: #FFFFFF;
+  box-shadow: 0 6px 0 #047857;
+  transition: all 0.08s ease;
+}
+.btn-3d-green:active:not(:disabled) {
+  transform: translateY(4px);
+  box-shadow: 0 2px 0 #047857;
+}
+
+.btn-3d-orange {
+  background-color: #F97316;
+  color: #FFFFFF;
+  box-shadow: 0 6px 0 #C2410C;
+  transition: all 0.08s ease;
+}
+.btn-3d-orange:active:not(:disabled) {
+  transform: translateY(4px);
+  box-shadow: 0 2px 0 #C2410C;
+}
+
+.btn-3d-buzzer {
+  border-radius: 1.5rem;
+  font-weight: 800;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
