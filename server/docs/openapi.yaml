@@ -1,0 +1,302 @@
+openapi: 3.0.3
+info:
+  title: BSI Duel Cerdas - Realtime Game Engine API
+  description: |
+    Spesifikasi REST API dan protokol WebSocket untuk platform gamifikasi
+    **"Duel Cerdas: Jago Atur Uang"** (Sharia Young Leader Summit 2026 - BSI Maslahat).
+    Dirancang untuk performa tinggi (1.000 Concurrent Users) sub-5ms latency.
+  version: 1.0.0
+  contact:
+    name: Sharia Young Leader Summit 2026
+servers:
+  - url: http://localhost:8080
+    description: Server Lokal Development (HTTP REST)
+  - url: ws://localhost:8080
+    description: Server Lokal Development (WebSocket)
+
+paths:
+  /api/health:
+    get:
+      summary: Health Check
+      description: Memeriksa ketersediaan dan status engine game secara real-time.
+      operationId: healthCheck
+      responses:
+        '200':
+          description: Engine aktif dan sehat.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: "ok"
+                  service:
+                    type: string
+                    example: "bsi-duel-cerdas-engine"
+                  version:
+                    type: string
+                    example: "1.0.0"
+
+  /api/modules:
+    get:
+      summary: Daftar 8 Modul Literasi Finansial Syariah
+      description: Mengambil seluruh katalog kurikulum Saku Barakah BSI.
+      operationId: getModules
+      responses:
+        '200':
+          description: Daftar modul literasi syariah berhasil diambil.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ModuleInfo'
+
+  /api/rooms:
+    post:
+      summary: Buat Room Arena Duel Baru
+      description: Guru/Fasilitator membuat room duel di Smart TV kelas.
+      operationId: createRoom
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateRoomRequest'
+      responses:
+        '201':
+          description: Room berhasil dibuat dengan kode acak unik (BSI-XXXX).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Room'
+        '400':
+          description: Input request tidak valid.
+        '500':
+          description: Gagal memuat butir soal modul.
+
+  /api/rooms/{code}:
+    get:
+      summary: Ambil Detail Room
+      description: Mengambil data room, status duel, dan daftar pemain aktif.
+      operationId: getRoomByCode
+      parameters:
+        - name: code
+          in: path
+          required: true
+          description: Kode unik room (misal BSI-A1B2)
+          schema:
+            type: string
+            example: "BSI-A1B2"
+      responses:
+        '200':
+          description: Data room ditemukan.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Room'
+        '404':
+          description: Room tidak ditemukan atau sudah selesai.
+
+  /ws:
+    get:
+      summary: WebSocket Connection Upgrade
+      description: |
+        Koneksi persisten real-time dua arah untuk layar Smart TV dan tombol buzzer HP siswa.
+        Protokol JSON event-driven berkecepatan tinggi.
+      operationId: upgradeWebSocket
+      responses:
+        '101':
+          description: Switching Protocols ke WebSocket.
+
+components:
+  schemas:
+    GameMode:
+      type: string
+      enum: [1v1, team]
+      description: Format duel (1 lawan 1 atau Tim Hijau vs Tim Oranye).
+
+    TeamType:
+      type: string
+      enum: [none, hijau, oranye]
+      description: Aliansi tim pemain.
+
+    RoomState:
+      type: string
+      enum: [waiting, in_progress, finished]
+      description: Siklus hidup status permainan.
+
+    OptionKey:
+      type: string
+      enum: [A, B, C, D]
+      description: Kunci pilihan jawaban.
+
+    Option:
+      type: object
+      properties:
+        key:
+          $ref: '#/components/schemas/OptionKey'
+        text:
+          type: string
+          example: "Rp6.500"
+
+    Question:
+      type: object
+      properties:
+        id:
+          type: string
+          example: "m1_q1"
+        module_id:
+          type: integer
+          example: 1
+        question_text:
+          type: string
+          example: "Kamu punya uang Rp10.000 dan beli buku Rp3.500. Berapa uang kembalianmu?"
+        options:
+          type: array
+          items:
+            $ref: '#/components/schemas/Option'
+        correct_option:
+          $ref: '#/components/schemas/OptionKey'
+        time_limit_seconds:
+          type: integer
+          example: 15
+        explanation:
+          type: string
+          example: "Uang Rp10.000 dikurangi harga buku Rp3.500 menghasilkan uang kembalian Rp6.500."
+
+    PlayerAnswer:
+      type: object
+      properties:
+        question_id:
+          type: string
+        selected_key:
+          $ref: '#/components/schemas/OptionKey'
+        is_correct:
+          type: boolean
+        points_earned:
+          type: integer
+        answered_at:
+          type: string
+          format: date-time
+        response_time_ms:
+          type: integer
+
+    Player:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        avatar:
+          type: string
+        team:
+          $ref: '#/components/schemas/TeamType'
+        score:
+          type: integer
+        streak:
+          type: integer
+        max_streak:
+          type: integer
+        answers:
+          type: array
+          items:
+            $ref: '#/components/schemas/PlayerAnswer'
+        is_ready:
+          type: boolean
+
+    Room:
+      type: object
+      properties:
+        code:
+          type: string
+          example: "BSI-A1B2"
+        mode:
+          $ref: '#/components/schemas/GameMode'
+        module_id:
+          type: integer
+        module_name:
+          type: string
+        state:
+          $ref: '#/components/schemas/RoomState'
+        questions:
+          type: array
+          items:
+            $ref: '#/components/schemas/Question'
+        current_question_idx:
+          type: integer
+        question_start_time:
+          type: string
+          format: date-time
+        players:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/Player'
+        created_at:
+          type: string
+          format: date-time
+        finished_at:
+          type: string
+          format: date-time
+
+    ModuleInfo:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        title:
+          type: string
+          example: "Kenali Uang dan Nilainya"
+        description:
+          type: string
+          example: "Mengenal nominal uang rupiah dan nilai tukar barang"
+        icon:
+          type: string
+          example: "coins"
+        pillar:
+          type: string
+          example: "Finansial"
+
+    CreateRoomRequest:
+      type: object
+      required:
+        - mode
+        - module_id
+      properties:
+        mode:
+          $ref: '#/components/schemas/GameMode'
+        module_id:
+          type: integer
+          minimum: 1
+          maximum: 8
+          example: 1
+        question_count:
+          type: integer
+          default: 5
+          example: 5
+
+    WebSocketEvent:
+      type: object
+      description: Skema umum pesan JSON protokol WebSocket.
+      properties:
+        type:
+          type: string
+          enum:
+            - join_room
+            - start_game
+            - submit_answer
+            - next_question
+            - room_state
+            - game_started
+            - answer_result
+            - question_change
+            - game_over
+            - error
+        room_code:
+          type: string
+          example: "BSI-A1B2"
+        payload:
+          type: object

@@ -33,7 +33,7 @@
 2. **Web Gamifikasi Kelas ("Duel Cerdas"):**
    * **Smart TV Host Screen:** Arena pertarungan kuis cerdas cermat 1080p yang membagi kelas menjadi **Tim Hijau (BSI)** vs **Tim Oranye (Maslahat)**.
    * **Mobile Player Pad:** Pengendali cepat di HP siswa dengan 4 tombol geometri raksasa ramah jempol.
-   * **Zero Audio Asset Download:** Synthesizer Web Audio API bawaan browser untuk efek suara kuis seketika tanpa membebani jaringan sekolah.
+   * **Zero Audio Asset Download:** Synthesizer Web Audio API bawaan browser (<1KB kode) untuk efek suara kuis seketika tanpa membebani jaringan sekolah.
 
 ---
 
@@ -55,44 +55,53 @@
 ## 🏗️ Arsitektur Teknologi (Didesain untuk 1.000 CCU)
 
 Aplikasi dibangun dengan arsitektur **Dual-Engine Pragmatis**:
-* **Frontend:** Next.js (App Router, TypeScript, Tailwind CSS, Framer Motion) untuk tampilan Smart TV dan mobile buzzer pad.
-* **Backend:** Go 1.22+ (`gorilla/websocket`, In-Memory State Mutex, single static binary ~20MB) untuk WebSocket real-time sub-10ms.
+* **Frontend:** Next.js (App Router, TypeScript, Tailwind CSS, Lucide Icons, Canvas Confetti) untuk tampilan Smart TV dan mobile buzzer pad.
+* **Backend:** Go 1.24 (`gorilla/websocket`, In-Memory State Mutex, single static binary ~20MB) untuk WebSocket real-time sub-5ms.
 * **Database & Caching:** Redis 7 (Live Score & Pub/Sub) + PostgreSQL 16 (Durable Data).
 * **Anti-503:** In-memory game state + write-behind batch SQL insertion (database hanya diakses 2x per pertandingan).
 * **Anti-403:** Token-bucket rate limiting berbasis session room, bukan per IP publik (aman untuk 1.000 siswa di 1 Wi-Fi sekolah).
+* **Zero Cold-Start:** Soal kurikulum 8 modul ter-embed langsung di Go engine, siap jalan seketika tanpa perlu migrasi DB manual untuk pengujian kelas.
 
 ---
 
 ## 🚀 Panduan Menjalankan Projek (Local Development)
 
-### 1. Prasyarat
-* Docker & Docker Compose
-* Node.js v20+ & pnpm / npm
-* Go v1.22+
-
-### 2. Menjalankan Infrastruktur Database
-```bash
-docker compose up -d
-```
-Layanan PostgreSQL (port `5432`) dan Redis (port `6379`) akan berjalan di background.
-
-### 3. Menjalankan Backend Game Engine (Go)
+### 1. Menjalankan Backend Game Engine (Go)
 ```bash
 cd server
 go run cmd/server/main.go
 ```
-Server WebSocket & REST API akan aktif di `http://localhost:8080`.
+*Server WebSocket & REST API aktif di `http://localhost:8080` (WebSocket di `ws://localhost:8080/ws`).*
 
-### 4. Menjalankan Frontend Next.js
+Untuk menjalankan unit testing backend (13 unit test):
+```bash
+cd server
+go test -v ./...
+```
+
+### 2. Menjalankan Frontend Web (Next.js)
+Buka terminal baru:
 ```bash
 cd web
 npm install
 npm run dev
 ```
 Buka browser di:
-* `http://localhost:3000` — Portal Siswa & Kurikulum Modul
-* `http://localhost:3000/tv/[roomCode]` — Tampilan Smart TV Kelas
-* `http://localhost:3000/play/[roomCode]` — Pengendali HP Siswa (Buzzer Pad)
+* `http://localhost:3000` — Portal Beranda, Buat Room Guru & Join HP Siswa
+* `http://localhost:3000/tv/[roomCode]` — Tampilan Smart TV Kelas 1080p
+* `http://localhost:3000/play/[roomCode]` — Pengendali HP Siswa (Buzzer Pad 4 Kuadran)
+
+Untuk build produksi frontend:
+```bash
+cd web
+npm run build
+```
+
+### 3. Infrastruktur Database Tambahan (Opsional untuk Produksi)
+```bash
+docker compose up -d
+```
+Layanan PostgreSQL 16 (port `5432`) dan Redis 7 (port `6379`) siap untuk persistensi jangka panjang.
 
 ---
 
@@ -101,10 +110,4 @@ Buka browser di:
 * `PRD.md` — Product Requirement Document komprehensif, metrik SROI, dan alur kompetisi SYLS 2026.
 * `DESIGN.md` — Spesifikasi token desain berstandar designmd.ai dan aturan anti-slop.
 * `AGENTS.md` — Panduan operasional dan batasan teknis bagi developer dan agen AI.
-
----
-
-## 👥 Tim Pengembang
-* **Ketua & Fullstack Engineer:** Hadi Akram Ramadhan
-* **Regional:** Perguruan Tinggi Regional 4 (Jawa Timur / Jember Target Pilot)
-* **Kategori:** Social Project Competition — Sharia Young Leader Summit (SYLS) 2026
+* `server/docs/openapi.yaml` — Dokumentasi standar OpenAPI 3.0 untuk REST API dan protokol WebSocket engine game.
