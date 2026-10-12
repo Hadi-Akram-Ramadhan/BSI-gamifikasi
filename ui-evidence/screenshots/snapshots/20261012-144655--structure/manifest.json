@@ -1,0 +1,97 @@
+{
+  "version": 1,
+  "kind": "snapshot-run",
+  "generatedAt": "2026-10-12T14:46:55.965Z",
+  "run": {
+    "id": "20261012-144655--structure",
+    "label": "structure",
+    "title": "Current UI Snapshot · structure",
+    "description": "Current UI snapshot for 1 stage(s) and 1 selected screen(s).",
+    "selectionMode": "direct",
+    "baseUrl": "http://localhost:3001"
+  },
+  "scope": null,
+  "selection": [
+    {
+      "stageId": "primary-flow",
+      "stageTitle": "Duel Cerdas playable demo",
+      "screenIds": [
+        "home"
+      ],
+      "screenLabels": [
+        "Homepage"
+      ],
+      "viewportIds": [
+        "mobile-390",
+        "desktop-1440"
+      ]
+    }
+  ],
+  "artifacts": {
+    "notes": "ui-evidence/screenshots/snapshots/20261012-144655--structure/notes.en.md",
+    "report": "ui-evidence/screenshots/snapshots/20261012-144655--structure/report.en.md",
+    "manifest": "ui-evidence/screenshots/snapshots/20261012-144655--structure/manifest.json",
+    "review": "ui-evidence/screenshots/snapshots/20261012-144655--structure/review/index.html",
+    "current": [
+      "ui-evidence/screenshots/snapshots/20261012-144655--structure/captures/primary-flow/home__default__mobile-390__current.png",
+      "ui-evidence/screenshots/snapshots/20261012-144655--structure/captures/primary-flow/home__default__desktop-1440__current.png"
+    ],
+    "overviews": [
+      "ui-evidence/screenshots/snapshots/20261012-144655--structure/overview/primary-flow__mobile-390__snapshot-overview.png",
+      "ui-evidence/screenshots/snapshots/20261012-144655--structure/overview/primary-flow__desktop-1440__snapshot-overview.png"
+    ]
+  },
+  "bundle": {
+    "selfContained": true,
+    "origin": "snapshot-run"
+  },
+  "failures": [],
+  "captures": [
+    {
+      "stageId": "primary-flow",
+      "stageTitle": "Duel Cerdas playable demo",
+      "screenId": "home",
+      "fileId": "home",
+      "label": "Homepage",
+      "locale": "default",
+      "viewportId": "mobile-390",
+      "current": "ui-evidence/screenshots/snapshots/20261012-144655--structure/captures/primary-flow/home__default__mobile-390__current.png"
+    },
+    {
+      "stageId": "primary-flow",
+      "stageTitle": "Duel Cerdas playable demo",
+      "screenId": "home",
+      "fileId": "home",
+      "label": "Homepage",
+      "locale": "default",
+      "viewportId": "desktop-1440",
+      "current": "ui-evidence/screenshots/snapshots/20261012-144655--structure/captures/primary-flow/home__default__desktop-1440__current.png"
+    }
+  ],
+  "overviewEntries": [
+    {
+      "stageId": "primary-flow",
+      "stageTitle": "Duel Cerdas playable demo",
+      "viewportId": "mobile-390",
+      "path": "ui-evidence/screenshots/snapshots/20261012-144655--structure/overview/primary-flow__mobile-390__snapshot-overview.png"
+    },
+    {
+      "stageId": "primary-flow",
+      "stageTitle": "Duel Cerdas playable demo",
+      "viewportId": "desktop-1440",
+      "path": "ui-evidence/screenshots/snapshots/20261012-144655--structure/overview/primary-flow__desktop-1440__snapshot-overview.png"
+    }
+  ],
+  "commands": {
+    "rerun": "ui-evidence snapshot --config ui-evidence/config.yaml --stage primary-flow --screens home --label structure",
+    "rebuild": "ui-evidence snapshot --config ui-evidence/config.yaml --stage primary-flow --screens home --label structure"
+  },
+  "counts": {
+    "stages": 1,
+    "screens": 1,
+    "expectedCaptures": 2,
+    "captures": 2,
+    "overviews": 2,
+    "failedCaptures": 0
+  }
+}

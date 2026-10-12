@@ -1,0 +1,12 @@
+{
+  "checks": [
+    "Nickname and avatar persist with correct form values",
+    "Destructive reset dialog closes with Escape and restores focus",
+    "Achievement modal keyboard focus stays inside dialog",
+    "Mobile WCAG A/AA scans: home, savings, profile, badges, duel",
+    "Lobby, arena, and result controls fit 1280x720 without scroll",
+    "Lesson transition inspected at 10% playback (3 active animations)",
+    "Reduced-motion preference supported"
+  ],
+  "passed": true
+}

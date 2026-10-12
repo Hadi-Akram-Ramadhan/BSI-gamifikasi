@@ -1,0 +1,20 @@
+{
+  "checks": [
+    "Savings deposit persists after reload",
+    "Lesson retry, completion and XP reward",
+    "Eight-question quiz scoring and explanations",
+    "Needs/wants game completes using tap alternative",
+    "Savings mini-game reaches target",
+    "hitung-koin mini-game completes",
+    "berbagi mini-game completes",
+    "TV follows teacher start, pause, and resume",
+    "Five-round manual duel synchronizes scores, reveal, next, result",
+    "Digital 1v1 joins, simultaneous answers, duplicate protection and refresh",
+    "Expired round reveals without awarding unanswered points",
+    "Unknown room friendly error",
+    "15 routes at 360/390/768/1440px without horizontal overflow",
+    "No browser runtime errors"
+  ],
+  "errors": [],
+  "passed": true
+}
