@@ -17,7 +17,11 @@ import { useStore } from "@/lib/store";
 import { topics, Topic } from "@/data/content";
 import { AdventureArt, Mascot, TopicArt } from "./art";
 import { cn } from "@/lib/utils";
+import { motion, useReducedMotion } from "motion/react";
+import { AnimatedCard, MotionLink } from "./game-motion";
+import { fadeIn, popIn, slideUp, staggerContainer } from "@/lib/motion";
 export function Progress({ value, label }: { value: number; label?: string }) {
+  const reduce = useReducedMotion();
   return (
     <div
       className="progress"
@@ -27,10 +31,14 @@ export function Progress({ value, label }: { value: number; label?: string }) {
       aria-valuemin={0}
       aria-valuemax={100}
     >
-      <span
-        style={{
-          transform: `scaleX(${Math.min(100, Math.max(0, value)) / 100})`,
-        }}
+      <motion.span
+        initial={false}
+        animate={{ scaleX: Math.min(100, Math.max(0, value)) / 100 }}
+        transition={
+          reduce
+            ? { duration: 0 }
+            : { type: "spring", duration: 0.45, bounce: 0 }
+        }
       />
     </div>
   );
@@ -39,9 +47,10 @@ export function TopicCard({ topic, index }: { topic: Topic; index: number }) {
   const s = useStore();
   const done = s.completed.includes(topic.slug);
   return (
-    <Link
+    <AnimatedCard
       href={`/materi/${topic.slug}`}
       className={cn("topic-card", topic.color)}
+      index={index}
     >
       <div className="topic-card-top">
         <span>Dunia {index + 1}</span>
@@ -71,7 +80,7 @@ export function TopicCard({ topic, index }: { topic: Topic; index: number }) {
           </span>
         </div>
       </div>
-    </Link>
+    </AnimatedCard>
   );
 }
 export function DuelCards() {
@@ -116,40 +125,51 @@ export function DuelCards() {
 }
 export function Home() {
   const s = useStore();
+  const reduce = useReducedMotion();
   return (
     <>
       <section className="hero" data-testid="home-hero">
         <div className="hero-inner">
-          <div className="hero-copy">
+          <motion.div
+            className="hero-copy"
+            initial="hidden"
+            animate="visible"
+            variants={staggerContainer}
+          >
             <span className="hero-label">
               <Sparkles size={15} /> Petualangan kecil, masa depan hebat
             </span>
-            <h1>
+            <motion.h1 variants={reduce ? fadeIn : popIn}>
               Jago atur uang,
               <br />
               seru petualangannya!
-            </h1>
-            <p>
+            </motion.h1>
+            <motion.p variants={reduce ? fadeIn : slideUp}>
               Belajar menabung, belanja bijak, dan berbagi.
               <br className="desktop-break" /> Bersama Koini, jadi jagoan
               finansial sambil bermain!
-            </p>
-            <div className="hero-actions">
-              <Link className="button" href="/materi">
+            </motion.p>
+            <motion.div className="hero-actions" variants={fadeIn}>
+              <MotionLink
+                className="button hero-primary"
+                href="/materi"
+                whileHover={reduce ? undefined : { y: -3 }}
+                whileTap={reduce ? undefined : { scale: 0.96 }}
+              >
                 <BookOpen size={20} /> Mulai Petualangan{" "}
                 <ArrowRight size={18} />
-              </Link>
+              </MotionLink>
               <Link className="button button-white" href="/duel">
                 <Swords size={20} /> Main Duel
               </Link>
-            </div>
+            </motion.div>
             <div className="hero-note">
               <span>
                 <Check size={13} />
               </span>{" "}
               Untuk jagoan kelas 4–6 SD <i /> Belajar sesuai langkahmu
             </div>
-          </div>
+          </motion.div>
           <AdventureArt />
         </div>
         <svg

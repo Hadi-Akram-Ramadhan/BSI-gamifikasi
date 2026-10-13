@@ -64,3 +64,7 @@ Production route retention in this Next.js version may keep hidden previous page
 - TV-specific production capture is stored in the latest `verified-tv` snapshot, with 1280×720 and 1920×1080 captures.
 
 **Verdict:** implemented core demo approved after fixes. Automated accessibility checks do not replace assistive-technology/user testing. Physical Smart TV/browser performance and Safari are not verified. Teacher/admin CRUD, full sound design, class analytics, and networked multiplayer remain outside the completed scope.
+
+## Motion enhancement review — 13 October 2026
+
+The animation request supersedes the earlier decision against idle hero motion. Bounded hero decoration is now intentional; TV reading remains calm and reduced motion removes continuous loops. See [MOTION.md](MOTION.md) for the three-pass review, new fifth mini-game, component inventory, normal/reduced-motion test results, and current ui-evidence report. Earlier verification above describes the original implementation baseline.

@@ -4,11 +4,19 @@ import Link from "next/link";
 import * as Dialog from "@radix-ui/react-dialog";
 import * as AlertDialog from "@radix-ui/react-alert-dialog";
 import { QRCodeSVG } from "qrcode.react";
-import { ArrowRight, Check, Plus, Trophy, X } from "lucide-react";
+import { ArrowRight, Plus, Trophy, X } from "lucide-react";
 import { badges, rupiah, topics, questions } from "@/data/content";
-import { resetDemo, reward, update, useStore } from "@/lib/store";
+import { resetDemo, recordSavings, update, useStore } from "@/lib/store";
+import { AnimatePresence, motion, useReducedMotion } from "motion/react";
+import {
+  AnimatedCounter,
+  AnimatedSavingsJar,
+  SavingBox,
+  QuestionTransition,
+} from "./game-motion";
+import { fadeIn, popIn, softSpring, staggerContainer } from "@/lib/motion";
 import { cn } from "@/lib/utils";
-import { Mascot, TopicArt } from "./art";
+import { Mascot } from "./art";
 import { Confetti, PageHeading } from "./learning";
 import { DuelCards, Progress } from "./home";
 export function Modal({
@@ -45,16 +53,13 @@ export function Savings() {
   const [history, setHistory] = useState(false);
   const [goal, setGoal] = useState(s.goal);
   const [target, setTarget] = useState(s.target);
+  const [milestone, setMilestone] = useState(0);
   const progress = (s.savings / s.target) * 100;
   const add = () => {
-    const amount = Math.min(2000, s.target - s.savings);
+    const { amount, milestone: reached } = recordSavings();
     if (amount <= 0) return;
-    update((v) => {
-      v.savings += amount;
-      v.deposits.unshift({ amount, date: new Date().toISOString() });
-    });
     setMessage(`${rupiah(amount)} tercatat. Langkah kecilmu berarti!`);
-    if (s.savings + amount >= s.target) reward(`saving-${s.target}`, 50, 1);
+    if (reached) setMilestone(reached);
   };
   return (
     <div className="page-container content-page" data-testid="savings">
@@ -64,11 +69,13 @@ export function Savings() {
       />
       <div className="savings-layout">
         <div className="savings-illustration">
-          <TopicArt index={2} />
+          <AnimatedSavingsJar value={s.savings} target={s.target} />
           <span className="status-pill">Impianku</span>
           <h2>{s.goal}</h2>
           <p className="muted">Tercatat dari target {rupiah(s.target)}</p>
-          <div className="savings-amount">{rupiah(s.savings)}</div>
+          <div className="savings-amount">
+            <AnimatedCounter value={s.savings} currency />
+          </div>
           <Progress value={progress} />
           <p className="spacer-top">
             {Math.round(progress)}% tercapai ·{" "}
@@ -98,6 +105,7 @@ export function Savings() {
                   v.target = target;
                 });
                 setMessage("Target baru tersimpan. Yuk, lanjutkan!");
+                setMilestone(0);
               }}
             >
               <label className="field">
@@ -147,15 +155,11 @@ export function Savings() {
             aria-label={`${Math.floor(progress / 2)} dari 50 kotak terisi`}
           >
             {Array.from({ length: 50 }, (_, i) => (
-              <span
+              <SavingBox
                 key={i}
-                className={cn(
-                  "saving-box",
-                  i < Math.floor(progress / 2) && "filled",
-                )}
-              >
-                {i < Math.floor(progress / 2) ? <Check size={14} /> : i + 1}
-              </span>
+                index={i}
+                filled={i < Math.floor(progress / 2)}
+              />
             ))}
           </div>
           <div className="savings-caption">
@@ -181,9 +185,19 @@ export function Savings() {
           )}
           {s.savings >= s.target && (
             <div className="feedback" style={{ position: "relative" }}>
-              <Confetti />
+              {milestone === 100 && <Confetti />}
               <strong>Yeay, targetmu tercapai! ★</strong>
               <p>Rayakan usahamu. Kamu boleh menentukan impian berikutnya.</p>
+            </div>
+          )}
+          {milestone > 0 && milestone < 100 && (
+            <div
+              className="feedback milestone-feedback"
+              role="status"
+              key={milestone}
+            >
+              ★ {milestone}% tercapai! Sedikit demi sedikit, makin dekat dengan
+              impian.
             </div>
           )}
           {history && (
@@ -240,13 +254,19 @@ const badgeDesc = [
 ];
 export function Achievements() {
   const s = useStore();
+  const reduce = useReducedMotion();
   return (
     <div className="page-container content-page">
       <PageHeading
         title="Koleksi prestasiku!"
         subtitle={`${s.badges.length} dari 8 lencana sudah menemani petualanganmu. Setiap langkah berarti.`}
       />
-      <div className="badge-grid">
+      <motion.div
+        className="badge-grid"
+        initial="hidden"
+        animate="visible"
+        variants={staggerContainer}
+      >
         {badges.map((badge, i) => {
           const earned = s.badges.includes(i);
           return (
@@ -255,7 +275,11 @@ export function Achievements() {
               title={badge}
               description={badgeDesc[i]}
               trigger={
-                <button className={cn("badge-card", !earned && "locked")}>
+                <motion.button
+                  variants={reduce ? fadeIn : popIn}
+                  whileTap={reduce ? undefined : { scale: 0.96 }}
+                  className={cn("badge-card", !earned && "locked")}
+                >
                   <span className="badge-symbol">
                     {["★", "♧", "♥", "⚑", "♛", "✦", "✧", "★"][i]}
                   </span>
@@ -263,7 +287,7 @@ export function Achievements() {
                   <p>
                     {earned ? "✓ Sudah dikoleksi" : "Masih bisa dijelajahi"}
                   </p>
-                </button>
+                </motion.button>
               }
             >
               <Mascot emotion={earned ? "trophy" : "encouraging"} />
@@ -287,7 +311,7 @@ export function Achievements() {
             </Modal>
           );
         })}
-      </div>
+      </motion.div>
       <p className="muted spacer-top">
         Profil awal berisi lima lencana contoh untuk demonstrasi.
       </p>
@@ -297,6 +321,7 @@ export function Achievements() {
 export function Profile() {
   const s = useStore();
   const [saved, setSaved] = useState(false);
+  const reduce = useReducedMotion();
   return (
     <div className="page-container content-page">
       <PageHeading
@@ -306,7 +331,17 @@ export function Profile() {
       <div className="paper">
         <div className="profile-top">
           <span className="avatar-large">
-            {["👦🏻", "👧🏻", "🧕🏻", "👦🏽"][s.avatar]}
+            <AnimatePresence initial={false} mode="wait">
+              <motion.span
+                key={s.avatar}
+                initial={{ opacity: 0, scale: reduce ? 1 : 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0 }}
+                transition={softSpring}
+              >
+                {["👦🏻", "👧🏻", "🧕🏻", "👦🏽"][s.avatar]}
+              </motion.span>
+            </AnimatePresence>
           </span>
           <div>
             <h1>{s.name}</h1>
@@ -325,7 +360,9 @@ export function Profile() {
             [s.matches.length, "Duel dimainkan"],
           ].map(([n, label]) => (
             <div key={label}>
-              <strong>{n}</strong>
+              <strong>
+                <AnimatedCounter value={Number(n)} />
+              </strong>
               <span>{label}</span>
             </div>
           ))}
@@ -428,6 +465,7 @@ export function Profile() {
 export function Leaderboard() {
   const s = useStore();
   const [team, setTeam] = useState(false);
+  const reduce = useReducedMotion();
   const people = [
     { name: "Siti", xp: 2680, avatar: "🧕🏻" },
     { name: s.name, xp: s.xp, avatar: ["👦🏻", "👧🏻", "🧕🏻", "👦🏽"][s.avatar] },
@@ -465,65 +503,77 @@ export function Leaderboard() {
           Hasil duel · Poin
         </button>
       </div>
-      {rows.length === 0 ? (
-        <div className="empty-state">
-          <Mascot emotion="encouraging" />
-          <h2>Belum ada duel selesai</h2>
-          <p>Ajak teman untuk membuat cerita pertama kalian!</p>
-          <Link href="/duel" className="button">
-            Mulai duel
-          </Link>
-        </div>
-      ) : (
-        <>
-          <div className="podium">
-            {[1, 0, 2]
-              .filter((i) => rows[i])
-              .map((i) => (
-                <div className="podium-place" key={i}>
-                  <span>{rows[i].avatar}</span>
-                  <strong>{rows[i].name}</strong>
-                  <div className="podium-block">
-                    {i + 1}
-                    <small>
-                      {rows[i].xp.toLocaleString("id-ID")}{" "}
-                      {team ? "poin" : "XP"}
-                    </small>
-                  </div>
-                </div>
-              ))}
+      <QuestionTransition id={team ? "teams" : "people"}>
+        {rows.length === 0 ? (
+          <div className="empty-state">
+            <Mascot emotion="encouraging" />
+            <h2>Belum ada duel selesai</h2>
+            <p>Ajak teman untuk membuat cerita pertama kalian!</p>
+            <Link href="/duel" className="button">
+              Mulai duel
+            </Link>
           </div>
-          <div className="paper table-wrap">
-            <table>
-              <thead>
-                <tr>
-                  <th>Urutan</th>
-                  <th>Petualang</th>
-                  <th>{team ? "Poin pertandingan" : "Level"}</th>
-                  <th>{team ? "Semangat" : "Total XP"}</th>
-                </tr>
-              </thead>
-              <tbody>
-                {rows.map((p, i) => (
-                  <tr key={i} className={cn(p.name === s.name && "current")}>
-                    <td>{i + 1}</td>
-                    <td>
-                      <strong>
-                        {p.avatar} {p.name}
-                      </strong>
-                      {p.name === s.name ? " (kamu)" : ""}
-                    </td>
-                    <td>{team ? p.xp : Math.floor(p.xp / 500) + 1}</td>
-                    <td>
-                      {team ? "Terus belajar!" : p.xp.toLocaleString("id-ID")}
-                    </td>
-                  </tr>
+        ) : (
+          <>
+            <motion.div
+              className="podium"
+              initial="hidden"
+              animate="visible"
+              variants={staggerContainer}
+            >
+              {[1, 0, 2]
+                .filter((i) => rows[i])
+                .map((i) => (
+                  <motion.div
+                    layout
+                    className="podium-place"
+                    key={i}
+                    variants={reduce ? fadeIn : popIn}
+                  >
+                    <span>{rows[i].avatar}</span>
+                    <strong>{rows[i].name}</strong>
+                    <div className="podium-block">
+                      {i + 1}
+                      <small>
+                        <AnimatedCounter value={rows[i].xp} />{" "}
+                        {team ? "poin" : "XP"}
+                      </small>
+                    </div>
+                  </motion.div>
                 ))}
-              </tbody>
-            </table>
-          </div>
-        </>
-      )}
+            </motion.div>
+            <div className="paper table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Urutan</th>
+                    <th>Petualang</th>
+                    <th>{team ? "Poin pertandingan" : "Level"}</th>
+                    <th>{team ? "Semangat" : "Total XP"}</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {rows.map((p, i) => (
+                    <tr key={i} className={cn(p.name === s.name && "current")}>
+                      <td>{i + 1}</td>
+                      <td>
+                        <strong>
+                          {p.avatar} {p.name}
+                        </strong>
+                        {p.name === s.name ? " (kamu)" : ""}
+                      </td>
+                      <td>{team ? p.xp : Math.floor(p.xp / 500) + 1}</td>
+                      <td>
+                        {team ? "Terus belajar!" : p.xp.toLocaleString("id-ID")}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </>
+        )}
+      </QuestionTransition>
       <div className="note spacer-top">
         <Trophy size={21} /> Kemajuanmu lebih penting daripada urutanmu. Kalian
         semua hebat!

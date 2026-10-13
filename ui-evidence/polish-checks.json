@@ -5,7 +5,7 @@
     "Achievement modal keyboard focus stays inside dialog",
     "Mobile WCAG A/AA scans: home, savings, profile, badges, duel",
     "Lobby, arena, and result controls fit 1280x720 without scroll",
-    "Lesson transition inspected at 10% playback (3 active animations)",
+    "Lesson transition inspected at 10% playback (4 active animations)",
     "Reduced-motion preference supported"
   ],
   "passed": true

@@ -8,12 +8,12 @@ artifacts:
   reportLanguage: en
   overviewViewport: desktop-1440
 capture:
-  baseUrl: http://localhost:3001
+  baseUrl: http://127.0.0.1:3002
   browser:
     headless: true
     freezeAnimations: true
     waitForFonts: true
-    waitForNetworkIdleMs: 300
+    waitForNetworkIdleMs: 800
   viewports:
     - id: mobile-390
       viewport: { width: 390, height: 844 }
@@ -37,8 +37,8 @@ capture:
       timezoneId: Asia/Jakarta
 servers:
   after:
-    baseUrl: http://localhost:3001
-    command: npm run dev
+    baseUrl: http://127.0.0.1:3002
+    command: node node_modules/next/dist/bin/next start -p 3002 -H 127.0.0.1
 report:
   language: en
   checklist: [layout, spacing, interaction, accessibility]
@@ -64,6 +64,10 @@ stages:
         label: Sort needs and wants
         path: /mini-games/kebutuhan
         waitFor: { testId: mini-game }
+      - id: quiz
+        label: Quiz question and answers
+        path: /kuis/kenal-uang
+        waitFor: { testId: quiz }
       - id: duel
         label: Duel selection
         path: /duel

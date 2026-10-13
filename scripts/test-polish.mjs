@@ -45,6 +45,7 @@ try {
   await page.setViewportSize({ width: 390, height: 844 });
   for (const route of ["/", "/tabunganku", "/profil", "/pencapaian", "/duel"]) {
     await page.goto(base + route);
+    await page.waitForTimeout(1000);
     const result = await new AxeBuilder({ page })
       .withTags(["wcag2a", "wcag2aa", "wcag21aa"])
       .analyze();

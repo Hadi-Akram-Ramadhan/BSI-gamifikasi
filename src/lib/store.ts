@@ -35,6 +35,7 @@ export type AppState = {
   target: number;
   goal: string;
   deposits: { amount: number; date: string }[];
+  savingsMilestones: string[];
   rooms: Record<string, Room>;
   matches: {
     id?: string;
@@ -59,6 +60,7 @@ export const initial: AppState = {
     amount: 2000,
     date: `2026-10-${String(i + 1).padStart(2, "0")}T08:00:00+07:00`,
   })),
+  savingsMilestones: [],
   rooms: {},
   matches: [],
 };
@@ -121,6 +123,7 @@ export function useStore() {
 export function update(fn: (s: AppState) => void) {
   setup();
   const next = read();
+  const before = { xp: next.xp, stars: next.stars, badges: [...next.badges] };
   fn(next);
   cached = next;
   try {
@@ -128,25 +131,65 @@ export function update(fn: (s: AppState) => void) {
   } catch {}
   channel?.postMessage("updated");
   emit();
+  const unlocked = next.badges.filter(
+    (badge) => !before.badges.includes(badge),
+  );
+  if (next.xp > before.xp || unlocked.length) {
+    window.dispatchEvent(
+      new CustomEvent("duel-reward", {
+        detail: {
+          xp: Math.max(0, next.xp - before.xp),
+          stars: Math.max(0, next.stars - before.stars),
+          badges: unlocked,
+          level:
+            Math.floor(next.xp / 500) > Math.floor(before.xp / 500)
+              ? Math.floor(next.xp / 500) + 1
+              : undefined,
+        },
+      }),
+    );
+  }
 }
 export function reward(key: string, xp = 50, badge?: number) {
-  let earned = false;
-  let unlocked: number | undefined;
   update((s) => {
     if (s.rewards.includes(key)) return;
-    earned = true;
     s.rewards.push(key);
     s.xp += xp;
     s.stars += 3;
     if (badge !== undefined && !s.badges.includes(badge)) {
       s.badges.push(badge);
-      unlocked = badge;
     }
   });
-  if (earned)
+}
+export function recordSavings(requested = 2000) {
+  let amount = 0;
+  let milestone = 0;
+  let target = 0;
+  update((s) => {
+    amount = Math.max(0, Math.min(requested, s.target - s.savings));
+    if (!amount) return;
+    const before = (s.savings / s.target) * 100;
+    s.savings += amount;
+    s.deposits.unshift({ amount, date: new Date().toISOString() });
+    target = s.target;
+    for (const threshold of [25, 50, 75, 100]) {
+      const key = `${s.goal}:${s.target}:${threshold}`;
+      if (
+        before < threshold &&
+        (s.savings / s.target) * 100 >= threshold &&
+        !s.savingsMilestones.includes(key)
+      ) {
+        s.savingsMilestones.push(key);
+        milestone = threshold;
+      }
+    }
+  });
+  if (milestone)
     window.dispatchEvent(
-      new CustomEvent("duel-reward", { detail: { xp, badge: unlocked } }),
+      new CustomEvent("duel-milestone", { detail: { milestone } }),
     );
+  if (milestone === 100) reward(`saving-${target}`, 50, 1);
+  return { amount, milestone };
 }
 export function completeLesson(slug: string) {
   update((s) => {

@@ -1,4 +1,7 @@
+"use client";
 import { cn } from "@/lib/utils";
+import { motion, useReducedMotion } from "motion/react";
+import { softSpring } from "@/lib/motion";
 export type Emotion =
   | "happy"
   | "thinking"
@@ -7,7 +10,9 @@ export type Emotion =
   | "encouraging"
   | "sleeping"
   | "trophy"
-  | "saving";
+  | "saving"
+  | "sad-but-supportive"
+  | "victory";
 export function Mascot({
   emotion = "happy",
   size = "md",
@@ -17,9 +22,27 @@ export function Mascot({
   size?: "sm" | "md" | "lg";
   animated?: boolean;
 }) {
+  const reduce = useReducedMotion();
+  const celebrating = ["celebrating", "trophy", "victory"].includes(emotion);
   return (
-    <svg
-      className={cn("mascot", `mascot-${size}`, animated && "mascot-animated")}
+    <motion.svg
+      key={emotion}
+      initial={{ y: 0, rotate: 0 }}
+      animate={
+        reduce
+          ? { y: 0, rotate: 0 }
+          : celebrating
+            ? { y: [0, -10, 0], rotate: [0, -4, 3, 0] }
+            : { y: 0, rotate: emotion === "thinking" ? -3 : 0 }
+      }
+      transition={
+        celebrating ? { duration: 0.65, ease: "easeOut" } : softSpring
+      }
+      className={cn(
+        "mascot",
+        `mascot-${size}`,
+        animated && !reduce && "mascot-animated",
+      )}
       viewBox="0 0 240 260"
       role="img"
       aria-label={`Koini ${emotion}`}
@@ -39,7 +62,7 @@ export function Mascot({
       />
       <path
         d={
-          emotion === "celebrating" || emotion === "trophy"
+          celebrating
             ? "M55 126Q18 110 24 75M181 120q36-11 31-48"
             : "M56 127Q20 141 24 159M179 126q32 15 33-15"
         }
@@ -49,18 +72,8 @@ export function Mascot({
         strokeLinecap="round"
       />
       <g fill="#fffdf4" stroke="#c7b890" strokeWidth="2">
-        <ellipse
-          cx="24"
-          cy={emotion === "celebrating" || emotion === "trophy" ? 72 : 160}
-          rx="14"
-          ry="17"
-        />
-        <ellipse
-          cx="212"
-          cy={emotion === "celebrating" || emotion === "trophy" ? 69 : 107}
-          rx="14"
-          ry="17"
-        />
+        <ellipse cx="24" cy={celebrating ? 72 : 160} rx="14" ry="17" />
+        <ellipse cx="212" cy={celebrating ? 69 : 107} rx="14" ry="17" />
       </g>
       <ellipse
         cx="125"
@@ -115,7 +128,7 @@ export function Mascot({
           strokeWidth="5"
         />
       ) : (
-        <g>
+        <g className={animated ? "mascot-eyes" : undefined}>
           <ellipse cx="91" cy="113" rx="9" ry="14" fill="#513b2c" />
           <ellipse cx="141" cy="113" rx="9" ry="14" fill="#513b2c" />
           <circle cx="94" cy="109" r="3.5" fill="white" />
@@ -126,6 +139,14 @@ export function Mascot({
       <ellipse cx="159" cy="138" rx="12" ry="7" fill="#ff8e59" />
       {emotion === "surprised" ? (
         <ellipse cx="115" cy="147" rx="9" ry="13" fill="#74432c" />
+      ) : emotion === "sad-but-supportive" || emotion === "encouraging" ? (
+        <path
+          d="M101 147q15 15 30 0"
+          fill="none"
+          stroke="#79432c"
+          strokeWidth="4"
+          strokeLinecap="round"
+        />
       ) : (
         <path d="M96 141q20 12 39-1q-3 33-22 28q-15-3-17-27" fill="#79432c" />
       )}
@@ -140,7 +161,7 @@ export function Mascot({
           Zz
         </text>
       )}
-      {emotion === "trophy" && (
+      {(emotion === "trophy" || emotion === "victory") && (
         <g transform="translate(161 149) scale(.5)">
           <path
             d="M0 0h80v40q-40 48-80 0Z"
@@ -167,7 +188,7 @@ export function Mascot({
           </text>
         </g>
       )}
-    </svg>
+    </motion.svg>
   );
 }
 export function TopicArt({
@@ -382,6 +403,7 @@ export function TopicArt({
   );
 }
 export function AdventureArt() {
+  const reduce = useReducedMotion();
   return (
     <div
       className="adventure-art"
@@ -389,7 +411,7 @@ export function AdventureArt() {
       role="img"
     >
       <svg className="island-scene" viewBox="0 0 640 440" aria-hidden="true">
-        <g fill="#fff" opacity=".85">
+        <g className="scene-clouds" fill="#fff" opacity=".85">
           <path d="M40 79q-8-24 16-25q7-34 38-16q27-3 27 22q30 0 24 19Z" />
           <path d="M428 57q-2-23 19-24q9-28 34-13q26-6 30 20q25-2 25 17Z" />
         </g>
@@ -463,7 +485,12 @@ export function AdventureArt() {
           stroke="#a88048"
           strokeWidth="4"
         />
-        <g fill="#ffcd51" stroke="#d9a138" strokeWidth="2">
+        <g
+          className="scene-stars"
+          fill="#ffcd51"
+          stroke="#d9a138"
+          strokeWidth="2"
+        >
           <path d="m182 95 7 15 17 2-12 12 3 17-15-8-15 8 3-17-12-12 17-2Z" />
           <path d="m425 151 6 12 14 2-10 10 2 14-12-7-12 7 3-14-10-10 13-2Z" />
           <ellipse
@@ -482,8 +509,18 @@ export function AdventureArt() {
           />
         </g>
       </svg>
-      <div className="hero-koini">
-        <Mascot size="lg" emotion="happy" />
+      <motion.div
+        className="hero-koini"
+        initial={{ opacity: 0, y: reduce ? 0 : 20, rotate: -9 }}
+        animate={{ opacity: 1, y: 0, rotate: -9 }}
+        transition={{ ...softSpring, delay: 0.18 }}
+      >
+        <Mascot size="lg" emotion="happy" animated />
+      </motion.div>
+      <div className="floating-coins" aria-hidden="true">
+        <span>Rp</span>
+        <span>★</span>
+        <span>Rp</span>
       </div>
       <div className="speech">
         Hai, aku Koini! <span>Yuk, belajar bareng!</span>

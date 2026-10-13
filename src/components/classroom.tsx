@@ -22,6 +22,15 @@ import { EmptyState, Logo } from "./shell";
 import { Answers, Confetti, PageHeading } from "./learning";
 import { Progress } from "./home";
 import { Modal, useOrigin } from "./progress-pages";
+import { AnimatePresence, motion, useReducedMotion } from "motion/react";
+import {
+  AnimatedCounter,
+  GameCountdown,
+  MatchStart,
+  QuestionTransition,
+  ScoreIncrease,
+} from "./game-motion";
+import { fadeIn, popIn, slideUp, staggerContainer } from "@/lib/motion";
 const statusText = {
   waiting: "Menunggu pemain",
   countdown: "Bersiap!",
@@ -212,34 +221,64 @@ function TeamScore({
   submitted?: boolean;
   showScore?: boolean;
 }) {
+  const reduce = useReducedMotion();
   return (
-    <div className={cn("team-score", index === 1 && "orange")}>
+    <motion.div
+      className={cn("team-score", index === 1 && "orange")}
+      initial="hidden"
+      animate="visible"
+      variants={reduce ? fadeIn : slideUp}
+    >
       <span className="team-emoji">{index === 0 ? "🌿" : "☀️"}</span>
       <h2>{team.name}</h2>
       {showScore ? (
         <>
-          <strong>{team.score}</strong>
+          <strong>
+            <ScoreIncrease value={team.score} />
+          </strong>
           <small>POIN</small>
         </>
       ) : (
         <div className="player-list">
           {team.players.length ? (
-            team.players.map((p) => (
-              <span className="player-chip" key={p}>
-                {p}
-              </span>
-            ))
+            <AnimatePresence initial={false}>
+              {team.players.map((p) => (
+                <motion.span
+                  layout
+                  className="player-chip"
+                  key={p}
+                  variants={reduce ? fadeIn : popIn}
+                  initial="hidden"
+                  animate="visible"
+                  exit="exit"
+                >
+                  <span aria-hidden="true">{index === 0 ? "🌿" : "☀️"}</span>{" "}
+                  {p}
+                </motion.span>
+              ))}
+            </AnimatePresence>
           ) : (
-            <span className="muted">Menunggu petualang…</span>
+            <span className="muted waiting-dots">Menunggu petualang…</span>
           )}
         </div>
       )}
       {showScore && submitted !== undefined && (
         <p className="submitted">
-          {submitted ? "✓ Jawaban diterima" : "Sedang berpikir…"}
+          <motion.span
+            key={String(submitted)}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+          >
+            {submitted ? "✓ Jawaban Terkunci" : "Sedang berpikir…"}
+          </motion.span>
         </p>
       )}
-    </div>
+      {!showScore && (
+        <small>
+          <AnimatedCounter value={team.players.length} /> petualang siap
+        </small>
+      )}
+    </motion.div>
   );
 }
 function LocalNote() {
@@ -252,16 +291,25 @@ function LocalNote() {
 }
 function Result({ room }: { room: Room }) {
   const [review, setReview] = useState(false);
+  const reduce = useReducedMotion();
   const winner =
     room.teams[0].score === room.teams[1].score
       ? "Kompak, hasilnya seri!"
       : `${room.teams[room.teams[0].score > room.teams[1].score ? 0 : 1].name} unggul!`;
   return (
-    <div className="match-results" data-testid="game-results">
+    <motion.div
+      className="match-results"
+      data-testid="game-results"
+      initial="hidden"
+      animate="visible"
+      variants={staggerContainer}
+    >
       <Confetti />
-      <Mascot emotion="trophy" />
+      <Mascot emotion="victory" />
       <span className="status-pill">Pertandingan selesai</span>
-      <h1 className="spacer-top">{winner}</h1>
+      <motion.h1 className="spacer-top" variants={reduce ? fadeIn : popIn}>
+        {winner}
+      </motion.h1>
       <p>Kalian semua hebat. Terima kasih sudah belajar bersama!</p>
       <div className="result-scores">
         {room.teams.map((t, i) => (
@@ -316,7 +364,7 @@ function Result({ room }: { room: Room }) {
           })}
         </div>
       )}
-    </div>
+    </motion.div>
   );
 }
 export function TVView({ code, view }: { code: string; view?: string }) {
@@ -373,7 +421,7 @@ export function TVView({ code, view }: { code: string; view?: string }) {
           </span>
           {["question", "paused"].includes(room.status) && (
             <div
-              className="arena-clock"
+              className={cn("arena-clock", seconds <= 5 && "timer-urgent")}
               role="timer"
               aria-label={`${seconds} detik`}
             >
@@ -438,19 +486,27 @@ export function TVView({ code, view }: { code: string; view?: string }) {
       ) : room.status === "finished" ? (
         <Result room={room} />
       ) : room.status === "countdown" ? (
-        <div className="countdown">
-          <span>{Math.min(3, seconds) || 1}</span>
-          <h2>Siapkan ide terbaikmu!</h2>
-        </div>
+        <GameCountdown seconds={seconds} />
       ) : (
         <>
+          <MatchStart
+            active={
+              room.index === 0 &&
+              room.status === "question" &&
+              now > 0 &&
+              now - (room.deadline - room.seconds * 1000) < 700
+            }
+          />
           <div className="arena-layout">
             <TeamScore
               team={room.teams[0]}
               index={0}
               submitted={room.answers[0] !== null}
             />
-            <div className="arena-question">
+            <QuestionTransition
+              id={`${room.run || 0}-${room.index}`}
+              className="arena-question"
+            >
               <small>
                 {room.status === "paused"
                   ? "Waktunya istirahat sebentar"
@@ -487,7 +543,7 @@ export function TVView({ code, view }: { code: string; view?: string }) {
                   Permainan dijeda oleh guru. Timer berhenti.
                 </div>
               )}
-            </div>
+            </QuestionTransition>
             <TeamScore
               team={room.teams[1]}
               index={1}
@@ -580,7 +636,9 @@ export function Controller({ code }: { code: string }) {
               >
                 <h3>
                   {t.name}
-                  <span>{t.score} poin</span>
+                  <span>
+                    <AnimatedCounter value={t.score} /> poin
+                  </span>
                 </h3>
                 <p>
                   {t.players.length ? t.players.join(", ") : "Belum ada pemain"}
@@ -854,7 +912,11 @@ export function Player({ code }: { code: string }) {
         </h1>
         {room.status === "waiting" || room.status === "countdown" ? (
           <>
-            <Mascot emotion="encouraging" />
+            {room.status === "countdown" ? (
+              <GameCountdown seconds={remaining(room, now)} />
+            ) : (
+              <Mascot emotion="encouraging" animated />
+            )}
             <p className="spacer-top">
               Tunggu guru memulai permainan. Tim kamu:{" "}
               {room.teams[team].players.join(", ") || "belum bergabung"}
@@ -866,7 +928,7 @@ export function Player({ code }: { code: string }) {
             )}
           </>
         ) : (
-          <>
+          <QuestionTransition id={`${room.run || 0}-${room.index}`}>
             <div className="quiz-top">
               <span>{statusText[room.status]}</span>
               <strong className="tabular-nums">
@@ -912,7 +974,7 @@ export function Player({ code }: { code: string }) {
                 Guru menjeda permainan. Istirahat sebentar, ya.
               </div>
             )}
-          </>
+          </QuestionTransition>
         )}
       </div>
       <LocalNote />

@@ -1,8 +1,18 @@
 "use client";
 import { useState } from "react";
 import Link from "next/link";
-import { ArrowLeft, ArrowRight, Check, RotateCcw, Star } from "lucide-react";
-import { AnimatePresence, motion } from "motion/react";
+import { ArrowLeft, ArrowRight, RotateCcw, Star } from "lucide-react";
+import { AnimatePresence, motion, useReducedMotion } from "motion/react";
+import {
+  AnimatedCard,
+  AnimatedCheck,
+  AnimatedCounter,
+  AnimatedSavingsJar,
+  ConfettiCelebration,
+  QuestionTransition,
+  SparkleEffect,
+} from "./game-motion";
+import { fadeIn, lessonSlide, slideUp, staggerContainer } from "@/lib/motion";
 import { topics, questions, Question } from "@/data/content";
 import { completeLesson, reward, useStore } from "@/lib/store";
 import { cn } from "@/lib/utils";
@@ -31,35 +41,24 @@ export function PageHeading({
   );
 }
 export function Confetti() {
-  return (
-    <div className="confetti" aria-hidden="true">
-      {Array.from({ length: 24 }, (_, i) => (
-        <span
-          key={i}
-          style={{
-            left: `${i * 4.2}%`,
-            animationDelay: `${(i % 5) * 0.09}s`,
-            transform: `rotate(${i * 31}deg)`,
-          }}
-        />
-      ))}
-    </div>
-  );
+  return <ConfettiCelebration />;
 }
 export function RewardScreen({
   title = "Wah, hebat sekali!",
   description = "Petualangan kecil, pengetahuan baru.",
   earned = true,
   onReplay,
+  backTo = "/materi",
 }: {
   title?: string;
   description?: string;
   earned?: boolean;
   onReplay?: () => void;
+  backTo?: string;
 }) {
   return (
     <div className="reward-screen" data-testid="reward-screen">
-      <Confetti />
+      <ConfettiCelebration enabled={earned} />
       <Mascot emotion="celebrating" />
       <h1>{title}</h1>
       <p>{description}</p>
@@ -80,8 +79,10 @@ export function RewardScreen({
             <RotateCcw size={17} /> Main lagi
           </button>
         )}
-        <Link className="text-link" href="/materi">
-          Jelajah dunia lainnya
+        <Link className="text-link" href={backTo}>
+          {backTo === "/mini-games"
+            ? "Kembali ke mini games"
+            : "Jelajah dunia lainnya"}
         </Link>
       </div>
     </div>
@@ -119,10 +120,18 @@ export function Answers({
   locked?: boolean;
   reveal?: boolean;
 }) {
+  const reduce = useReducedMotion();
   return (
-    <div className="answer-grid">
+    <motion.div
+      className="answer-grid"
+      initial="hidden"
+      animate="visible"
+      variants={staggerContainer}
+    >
       {question.options.map((option, i) => (
-        <button
+        <motion.button
+          variants={reduce ? fadeIn : slideUp}
+          whileTap={reduce ? undefined : { scale: 0.96 }}
           key={i}
           className={cn(
             "answer",
@@ -136,7 +145,7 @@ export function Answers({
         >
           <span className="answer-letter">
             {reveal && i === question.correct ? (
-              <Check size={20} />
+              <AnimatedCheck />
             ) : (
               String.fromCharCode(65 + i)
             )}
@@ -145,9 +154,9 @@ export function Answers({
           {reveal && i === question.correct && (
             <span className="sr-only">Jawaban benar</span>
           )}
-        </button>
+        </motion.button>
       ))}
-    </div>
+    </motion.div>
   );
 }
 export function Lesson({ slug }: { slug: string }) {
@@ -156,6 +165,9 @@ export function Lesson({ slug }: { slug: string }) {
   const [answer, setAnswer] = useState<number | null>(null);
   const s = useStore();
   const [earned, setEarned] = useState(false);
+  const [direction, setDirection] = useState(1);
+  const [exampleSavings, setExampleSavings] = useState(0);
+  const reduce = useReducedMotion();
   if (!topic) return <EmptyState />;
   const index = topics.indexOf(topic);
   const finish = () => {
@@ -182,19 +194,20 @@ export function Lesson({ slug }: { slug: string }) {
           </div>
         </div>
         <div className="paper" data-testid="lesson">
-          <AnimatePresence mode="wait" initial={false}>
+          <AnimatePresence mode="wait" initial={false} custom={direction}>
             <motion.div
               key={step}
-              initial={{ opacity: 0, x: 12 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -8 }}
-              transition={{ duration: 0.18 }}
+              custom={direction}
+              variants={reduce ? fadeIn : lessonSlide}
+              initial="hidden"
+              animate="visible"
+              exit="exit"
             >
               {step === 4 ? (
                 <>
                   <RewardScreen
                     earned={earned}
-                    title="Satu dunia, banyak cerita baru!"
+                    title="Materi Selesai!"
                     description={`Kamu selesai belajar ${topic.short.toLowerCase()}.`}
                   />
                   <div className="actions-row center-actions">
@@ -209,8 +222,67 @@ export function Lesson({ slug }: { slug: string }) {
               ) : (
                 <>
                   <div className="storybook">
-                    <div className={cn("storybook-art", topic.color)}>
-                      <TopicArt index={index} />
+                    <motion.div
+                      className={cn("storybook-art", topic.color)}
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      transition={{ duration: 0.28 }}
+                    >
+                      {step === 2 && index === 2 ? (
+                        <>
+                          <AnimatedSavingsJar
+                            value={exampleSavings}
+                            target={20000}
+                          />
+                          <button
+                            className="button button-small"
+                            disabled={exampleSavings >= 20000}
+                            onClick={() =>
+                              setExampleSavings((v) =>
+                                Math.min(20000, v + 2000),
+                              )
+                            }
+                          >
+                            Coba sisihkan Rp2.000
+                          </button>
+                          <small>
+                            Contoh:{" "}
+                            <AnimatedCounter value={exampleSavings} currency />{" "}
+                            dari Rp20.000
+                          </small>
+                        </>
+                      ) : (
+                        <TopicArt index={index} />
+                      )}
+                      {step === 2 && index === 0 && (
+                        <motion.div
+                          className="lesson-coins"
+                          initial="hidden"
+                          animate="visible"
+                          variants={staggerContainer}
+                        >
+                          {Array.from({ length: 5 }, (_, i) => (
+                            <motion.span
+                              key={i}
+                              variants={reduce ? fadeIn : slideUp}
+                            >
+                              1.000
+                            </motion.span>
+                          ))}
+                        </motion.div>
+                      )}
+                      {step === 3 && (
+                        <Mascot
+                          size="sm"
+                          emotion={
+                            answer === null
+                              ? "thinking"
+                              : answer === topic.answer
+                                ? "celebrating"
+                                : "sad-but-supportive"
+                          }
+                        />
+                      )}
                       <span className="status-pill">
                         {step === 0
                           ? "Yuk, kenalan!"
@@ -220,7 +292,7 @@ export function Lesson({ slug }: { slug: string }) {
                               ? "Cerita sehari-hari"
                               : "Giliran kamu!"}
                       </span>
-                    </div>
+                    </motion.div>
                     <div className="lesson-content">
                       <small className="muted">
                         Petualangan {index + 1} / 6
@@ -283,18 +355,22 @@ export function Lesson({ slug }: { slug: string }) {
                     <button
                       className="button button-white"
                       disabled={step === 0}
-                      onClick={() => setStep((v) => v - 1)}
+                      onClick={() => {
+                        setDirection(-1);
+                        setStep((v) => v - 1);
+                      }}
                     >
                       <ArrowLeft size={16} /> Sebelumnya
                     </button>
                     <button
                       className="button"
                       disabled={step === 3 && answer !== topic.answer}
-                      onClick={() =>
-                        step === 3
+                      onClick={() => {
+                        setDirection(1);
+                        return step === 3
                           ? finish()
-                          : setStep((v) => Math.min(3, v + 1))
-                      }
+                          : setStep((v) => Math.min(3, v + 1));
+                      }}
                     >
                       {step === 3
                         ? "Selesaikan materi"
@@ -361,54 +437,64 @@ export function Quiz({ slug }: { slug: string }) {
             />
           ) : (
             <>
-              <div className="quiz-top">
-                <strong>
-                  Soal {index + 1} dari {qs.length}
-                </strong>
-                <Progress value={((index + 1) / qs.length) * 100} />
-                <span className="xp-pill">+50 XP</span>
-              </div>
-              <div className="quiz-question">
-                <h2>{q.text}</h2>
-                <Mascot
-                  emotion={
-                    selected === null
-                      ? "thinking"
-                      : selected === q.correct
-                        ? "celebrating"
-                        : "encouraging"
-                  }
-                />
-              </div>
-              <Answers
-                question={q}
-                selected={selected}
-                onAnswer={answer}
-                locked={selected !== null}
-                reveal={selected !== null}
-              />
-              {selected !== null && (
-                <div
-                  className={cn("feedback", selected !== q.correct && "retry")}
-                  role="status"
-                >
+              <QuestionTransition id={q.id}>
+                <div className="quiz-top">
                   <strong>
-                    {selected === q.correct
-                      ? "Tepat sekali!"
-                      : "Belum tepat, tapi kita bisa belajar."}
+                    Soal {index + 1} dari {qs.length}
                   </strong>
-                  <p>{q.explanation}</p>
-                  <button
-                    className="button button-small spacer-top"
-                    onClick={next}
-                  >
-                    {index + 1 === qs.length
-                      ? "Lihat hasil"
-                      : "Soal berikutnya"}{" "}
-                    <ArrowRight size={16} />
-                  </button>
+                  <Progress value={((index + 1) / qs.length) * 100} />
+                  <span className="xp-pill">+50 XP</span>
                 </div>
-              )}
+                <div className="quiz-question">
+                  <h2>{q.text}</h2>
+                  <Mascot
+                    emotion={
+                      selected === null
+                        ? "thinking"
+                        : selected === q.correct
+                          ? "celebrating"
+                          : "encouraging"
+                    }
+                  />
+                </div>
+                <Answers
+                  question={q}
+                  selected={selected}
+                  onAnswer={answer}
+                  locked={selected !== null}
+                  reveal={selected !== null}
+                />
+                {selected !== null && (
+                  <div
+                    className={cn(
+                      "feedback",
+                      selected !== q.correct && "retry",
+                    )}
+                    role="status"
+                  >
+                    <strong>
+                      {selected === q.correct
+                        ? "Tepat sekali!"
+                        : "Belum tepat, tapi kita bisa belajar."}
+                    </strong>
+                    {selected === q.correct && (
+                      <span className="answer-reward">
+                        +1 jawaban benar <SparkleEffect />
+                      </span>
+                    )}
+                    <p>{q.explanation}</p>
+                    <button
+                      className="button button-small spacer-top"
+                      onClick={next}
+                    >
+                      {index + 1 === qs.length
+                        ? "Lihat hasil"
+                        : "Soal berikutnya"}{" "}
+                      <ArrowRight size={16} />
+                    </button>
+                  </div>
+                )}
+              </QuestionTransition>
             </>
           )}
         </div>
@@ -426,6 +512,12 @@ const games = [
   ],
   ["menabung", "Tantangan Menabung", "Isi toplesmu sampai target tercapai.", 2],
   ["berbagi", "Misi Berbagi", "Pilih kebaikan dalam cerita sehari-hari.", 3],
+  [
+    "belanja-cerdas",
+    "Belanja Cerdas",
+    "Penuhi kebutuhan dengan uang latihan Rp10.000.",
+    4,
+  ],
 ] as const;
 export function MiniGames() {
   return (
@@ -436,10 +528,11 @@ export function MiniGames() {
       />
       <div className="game-selection">
         {games.map(([slug, title, desc, i]) => (
-          <Link
+          <AnimatedCard
             key={slug}
             href={`/mini-games/${slug}`}
             className={cn("game-cover", topics[i].color)}
+            index={i}
           >
             <TopicArt index={i} />
             <div>
@@ -450,7 +543,7 @@ export function MiniGames() {
                 Mulai main <ArrowRight size={16} />
               </span>
             </div>
-          </Link>
+          </AnimatedCard>
         ))}
       </div>
     </div>
@@ -472,6 +565,19 @@ export function MiniGame({ slug }: { slug: string }) {
   const [deposit, setDeposit] = useState(0);
   const [done, setDone] = useState(false);
   const [earned, setEarned] = useState(false);
+  const [score, setScore] = useState(0);
+  const [dragging, setDragging] = useState(false);
+  const [basket, setBasket] = useState<number[]>([]);
+  const [warning, setWarning] = useState("");
+  const reduce = useReducedMotion();
+  const products = [
+    { icon: "📓", name: "Buku tulis", price: 4000, needed: true },
+    { icon: "✏️", name: "Pensil", price: 2000, needed: true },
+    { icon: "🥪", name: "Bekal", price: 4000, needed: true },
+    { icon: "🧸", name: "Boneka", price: 8000, needed: false },
+  ];
+  const budget =
+    10000 - basket.reduce((total, i) => total + products[i].price, 0);
   if (!game) return <EmptyState />;
   const finish = () => {
     setEarned(!s.rewards.includes(`game-${slug}`));
@@ -511,30 +617,57 @@ export function MiniGame({ slug }: { slug: string }) {
           {done ? (
             <RewardScreen
               earned={earned}
-              description="Kamu sudah menyelesaikan tantangan. Pengetahuanmu bertambah!"
+              backTo="/mini-games"
+              description={
+                slug === "menabung"
+                  ? "Toplesmu terisi Rp20.000. Target tercapai!"
+                  : slug === "belanja-cerdas"
+                    ? `Semua kebutuhan terpenuhi. Sisa uang latihan Rp${budget.toLocaleString("id-ID")}.`
+                    : `${score} dari ${slug === "kebutuhan" ? 6 : 3} tantangan berhasil. Pengetahuanmu bertambah!`
+              }
               onReplay={() => {
                 setDone(false);
                 setRound(0);
                 setSelected(null);
                 setDeposit(0);
+                setScore(0);
+                setBasket([]);
+                setWarning("");
               }}
             />
           ) : (
-            <div className="mini-stage">
+            <QuestionTransition className="mini-stage" id={round}>
               {slug === "kebutuhan" ? (
                 <>
                   <small>Barang {round + 1} dari 6</small>
                   <h2 className="spacer-top">Masuk keranjang yang mana?</h2>
-                  <div
+                  <motion.div
                     className="sort-item"
-                    draggable
-                    onDragStart={(e) =>
-                      e.dataTransfer.setData("text/plain", "item")
+                    draggable={selected !== sortItems[round][2]}
+                    animate={
+                      reduce
+                        ? {}
+                        : {
+                            x:
+                              selected === sortItems[round][2]
+                                ? selected === 0
+                                  ? -65
+                                  : 65
+                                : 0,
+                            y: selected === sortItems[round][2] ? 20 : 0,
+                            scale: dragging ? 1.04 : 1,
+                          }
                     }
+                    transition={{ type: "spring", duration: 0.35, bounce: 0 }}
+                    onDragStartCapture={(e) => {
+                      e.dataTransfer.setData("text/plain", "item");
+                      setDragging(true);
+                    }}
+                    onDragEndCapture={() => setDragging(false)}
                   >
                     <span>{sortItems[round][0]}</span>
                     <strong>{sortItems[round][1]}</strong>
-                  </div>
+                  </motion.div>
                   <p className="muted">
                     Seret barang atau ketuk salah satu keranjang.
                   </p>
@@ -549,14 +682,26 @@ export function MiniGame({ slug }: { slug: string }) {
                               ? "correct"
                               : "incorrect"),
                         )}
-                        onClick={() => setSelected(i)}
+                        disabled={selected === sortItems[round][2]}
+                        onClick={() => {
+                          setSelected(i);
+                          if (i === sortItems[round][2]) setScore((n) => n + 1);
+                        }}
                         onDragOver={(e) => e.preventDefault()}
                         onDrop={(e) => {
                           e.preventDefault();
-                          setSelected(i);
+                          if (selected !== sortItems[round][2]) {
+                            setSelected(i);
+                            if (i === sortItems[round][2])
+                              setScore((n) => n + 1);
+                          }
+                          setDragging(false);
                         }}
                       >
                         {label}
+                        {selected === i && i === sortItems[round][2] && (
+                          <AnimatedCheck />
+                        )}
                       </button>
                     ))}
                   </div>
@@ -580,10 +725,10 @@ export function MiniGame({ slug }: { slug: string }) {
                 </>
               ) : slug === "menabung" ? (
                 <>
-                  <TopicArt index={2} />
+                  <AnimatedSavingsJar value={deposit} target={20000} />
                   <h2>Target toples: Rp20.000</h2>
                   <div className="savings-amount">
-                    Rp{deposit.toLocaleString("id-ID")}
+                    <AnimatedCounter value={deposit} currency />
                   </div>
                   <Progress value={deposit / 200} />
                   <p className="spacer-top">
@@ -607,6 +752,64 @@ export function MiniGame({ slug }: { slug: string }) {
                     ))}
                   </div>
                 </>
+              ) : slug === "belanja-cerdas" ? (
+                <>
+                  <h2>Siapkan buku, pensil, dan bekal</h2>
+                  <p>
+                    Ketuk barang untuk memasukkannya ke keranjang. Ketuk lagi
+                    untuk mengembalikannya.
+                  </p>
+                  <div className="shopping-budget" role="status">
+                    Sisa uang: <AnimatedCounter value={budget} currency /> ·{" "}
+                    {basket.length} barang
+                  </div>
+                  <div className="shopping-grid">
+                    {products.map((product, i) => (
+                      <motion.button
+                        key={product.name}
+                        className={cn(
+                          "shopping-product",
+                          basket.includes(i) && "selected",
+                        )}
+                        aria-pressed={basket.includes(i)}
+                        whileTap={reduce ? undefined : { scale: 0.96 }}
+                        animate={{ y: !reduce && basket.includes(i) ? -4 : 0 }}
+                        onClick={() => {
+                          if (basket.includes(i)) {
+                            setBasket(basket.filter((item) => item !== i));
+                            setWarning("");
+                          } else if (product.price > budget)
+                            setWarning(
+                              "Uang latihanmu belum cukup. Kembalikan barang lain dan dahulukan kebutuhan, ya.",
+                            );
+                          else {
+                            setBasket([...basket, i]);
+                            setWarning("");
+                          }
+                        }}
+                      >
+                        <span>{product.icon}</span>
+                        <strong>{product.name}</strong>
+                        <small>Rp{product.price.toLocaleString("id-ID")}</small>
+                        {basket.includes(i) && <AnimatedCheck />}
+                      </motion.button>
+                    ))}
+                  </div>
+                  {warning && (
+                    <div className="feedback retry" role="status">
+                      {warning}
+                    </div>
+                  )}
+                  <button
+                    className="button spacer-top"
+                    disabled={
+                      !products.every((p, i) => !p.needed || basket.includes(i))
+                    }
+                    onClick={finish}
+                  >
+                    Selesaikan belanja
+                  </button>
+                </>
               ) : (
                 <>
                   <small>Tantangan {round + 1} dari 3</small>
@@ -615,13 +818,23 @@ export function MiniGame({ slug }: { slug: string }) {
                       <h2 className="spacer-top">
                         Berapa jumlah uang semuanya?
                       </h2>
-                      <div className="coin-row">
+                      <motion.div
+                        className="coin-row"
+                        variants={staggerContainer}
+                        initial="hidden"
+                        animate="visible"
+                      >
                         {counts[round].map((n, i) => (
-                          <span key={i} className="coin">
+                          <motion.span
+                            key={i}
+                            className="coin"
+                            variants={reduce ? fadeIn : slideUp}
+                          >
                             Rp{n.toLocaleString("id-ID")}
-                          </span>
+                            {selected === currentQ.correct && <SparkleEffect />}
+                          </motion.span>
                         ))}
-                      </div>
+                      </motion.div>
                     </>
                   ) : (
                     <>
@@ -632,7 +845,12 @@ export function MiniGame({ slug }: { slug: string }) {
                   <Answers
                     question={currentQ}
                     selected={selected}
-                    onAnswer={setSelected}
+                    onAnswer={(i) => {
+                      if (selected === null) {
+                        setSelected(i);
+                        if (i === currentQ.correct) setScore((n) => n + 1);
+                      }
+                    }}
                     locked={selected !== null}
                     reveal={selected !== null}
                   />
@@ -665,7 +883,7 @@ export function MiniGame({ slug }: { slug: string }) {
                   )}
                 </>
               )}
-            </div>
+            </QuestionTransition>
           )}
         </div>
       </div>

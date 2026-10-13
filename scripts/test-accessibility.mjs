@@ -23,7 +23,8 @@ for (const route of [
   });
   await page.goto((process.env.DEMO_URL || "http://localhost:3001") + route);
   await page.locator("main").waitFor();
-  await page.waitForTimeout(300);
+  // Inspect settled content, not an intermediate opacity during card entry.
+  await page.waitForTimeout(1000);
   const scan = await new AxeBuilder({ page })
     .withTags(["wcag2a", "wcag2aa", "wcag21aa"])
     .analyze();

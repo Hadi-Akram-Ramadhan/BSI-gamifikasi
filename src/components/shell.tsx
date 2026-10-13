@@ -18,6 +18,7 @@ import { MotionConfig } from "motion/react";
 import { useStore } from "@/lib/store";
 import { Mascot } from "./art";
 import { RewardFeedback } from "./reward-feedback";
+import { AnimatedCounter, AnimatedPage } from "./game-motion";
 import { cn } from "@/lib/utils";
 export function Logo() {
   return (
@@ -94,7 +95,7 @@ export function Shell({ children }: { children: React.ReactNode }) {
             <div className="header-player">
               <Link href="/pencapaian" className="star-counter">
                 <Star size={19} fill="currentColor" />
-                {s.stars}
+                <AnimatedCounter value={s.stars} />
               </Link>
               <span className="header-divider" />
               <Link
@@ -132,7 +133,11 @@ export function Shell({ children }: { children: React.ReactNode }) {
         </nav>
       )}
       <main id="main-content" className={cn(immersive && "immersive-main")}>
-        {children}
+        {immersive ? (
+          children
+        ) : (
+          <AnimatedPage route={path}>{children}</AnimatedPage>
+        )}
       </main>
       {!immersive && (
         <>
@@ -179,7 +184,7 @@ export function EmptyState({
 }) {
   return (
     <div className="empty-state">
-      <Mascot emotion="thinking" />
+      <Mascot emotion="thinking" animated />
       <h1>{title}</h1>
       <p>{text}</p>
       <Link className="button" href="/">

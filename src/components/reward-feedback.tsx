@@ -1,23 +1,30 @@
 "use client";
-import { useEffect, useState } from "react";
-import { AnimatePresence, motion } from "motion/react";
+import { useEffect, useRef, useState } from "react";
+import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import * as Dialog from "@radix-ui/react-dialog";
 import { X } from "lucide-react";
 import { badges } from "@/data/content";
 import { Mascot } from "./art";
-import { Confetti } from "./learning";
+import { ConfettiCelebration, SparkleEffect } from "./game-motion";
+import { softSpring } from "@/lib/motion";
+type Reward = { xp: number; stars: number; badges: number[]; level?: number };
 export function RewardFeedback() {
-  const [toast, setToast] = useState<number | null>(null);
-  const [badge, setBadge] = useState<number | undefined>();
+  const [toast, setToast] = useState<(Reward & { id: number }) | null>(null);
+  const [queue, setQueue] = useState<number[]>([]);
+  const serial = useRef(0);
+  const reduce = useReducedMotion();
+  const badge = queue[0];
   useEffect(() => {
     let timeout: ReturnType<typeof setTimeout>;
     const receive = (event: Event) => {
-      const detail = (event as CustomEvent<{ xp: number; badge?: number }>)
-        .detail;
-      setToast(detail.xp);
-      setBadge(detail.badge);
-      clearTimeout(timeout);
-      timeout = setTimeout(() => setToast(null), 2600);
+      const detail = (event as CustomEvent<Reward>).detail;
+      if (detail.xp) {
+        setToast({ ...detail, id: ++serial.current });
+        clearTimeout(timeout);
+        timeout = setTimeout(() => setToast(null), 2800);
+      }
+      if (detail.badges.length)
+        setQueue((current) => [...new Set([...current, ...detail.badges])]);
     };
     window.addEventListener("duel-reward", receive);
     return () => {
@@ -28,36 +35,52 @@ export function RewardFeedback() {
   return (
     <>
       <AnimatePresence initial={false}>
-        {toast !== null && (
+        {toast && (
           <motion.div
+            key={toast.id}
             className="reward-toast"
             role="status"
-            initial={{ opacity: 0, y: 15, scale: 0.95 }}
+            initial={{
+              opacity: 0,
+              y: reduce ? 0 : 15,
+              scale: reduce ? 1 : 0.95,
+            }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: -16 }}
-            transition={{ duration: 0.18 }}
+            exit={{ opacity: 0, y: reduce ? 0 : -16 }}
+            transition={softSpring}
           >
-            ★ +{toast} XP <span>+3 bintang untuk usahamu!</span>
+            <SparkleEffect />★ +{toast.xp} XP{" "}
+            <span>+{toast.stars} bintang untuk usahamu!</span>
+            {toast.level && (
+              <strong className="level-up">
+                Naik ke level {toast.level}! ✦
+              </strong>
+            )}
           </motion.div>
         )}
       </AnimatePresence>
       <Dialog.Root
         open={badge !== undefined}
         onOpenChange={(open) => {
-          if (!open) setBadge(undefined);
+          if (!open) setQueue((current) => current.slice(1));
         }}
       >
         <Dialog.Portal>
           <Dialog.Overlay className="dialog-overlay" />
           <Dialog.Content className="dialog-content achievement-dialog">
-            <Confetti />
-            <Mascot emotion="trophy" />
-            <Dialog.Title>Lencana baru untukmu!</Dialog.Title>
-            <Dialog.Description>
-              {badge !== undefined ? badges[badge] : ""} — satu lagi cerita
-              hebat di petualanganmu.
-            </Dialog.Description>
-            <Dialog.Close className="button">Yuk, lanjutkan!</Dialog.Close>
+            <div key={badge} className="achievement-reveal">
+              <ConfettiCelebration />
+              <Mascot emotion="victory" />
+              <div className="unlocked-badge" aria-hidden="true">
+                ★<SparkleEffect />
+              </div>
+              <Dialog.Title>Pencapaian baru!</Dialog.Title>
+              <Dialog.Description>
+                {badge !== undefined ? badges[badge] : ""} — satu lagi cerita
+                hebat di petualanganmu.
+              </Dialog.Description>
+            </div>
+            <Dialog.Close className="button">Lanjutkan</Dialog.Close>
             <Dialog.Close
               className="dialog-close"
               aria-label="Tutup pencapaian"
