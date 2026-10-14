@@ -1,0 +1,18 @@
+{
+  "checks": [
+    "no-preference: hero CTA, cards, navigation and lesson forward/back",
+    "no-preference: full quiz, real XP and achievement unlock without refresh replay",
+    "no-preference: deposits, four persisted milestones, only new savings boxes animate",
+    "no-preference: drag/drop, tap alternative, shopping selection and budget warning",
+    "no-preference: room join, synchronized countdown, locked answers, score, next, victory and replay",
+    "no-preference: 7 decorative loops; reduced motion preserves essential feedback",
+    "reduce: hero CTA, cards, navigation and lesson forward/back",
+    "reduce: full quiz, real XP and achievement unlock without refresh replay",
+    "reduce: deposits, four persisted milestones, only new savings boxes animate",
+    "reduce: drag/drop, tap alternative, shopping selection and budget warning",
+    "reduce: room join, synchronized countdown, locked answers, score, next, victory and replay",
+    "reduce: 0 decorative loops; reduced motion preserves essential feedback"
+  ],
+  "errors": [],
+  "passed": true
+}

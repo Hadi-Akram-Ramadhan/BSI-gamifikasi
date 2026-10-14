@@ -1,0 +1,291 @@
+{
+  "version": 1,
+  "kind": "snapshot-run",
+  "generatedAt": "2026-10-12T14:55:53.759Z",
+  "run": {
+    "id": "20261012-145553--tv-responsive",
+    "label": "tv-responsive",
+    "title": "Current UI Snapshot · tv-responsive",
+    "description": "Current UI snapshot for 1 stage(s) and 6 selected screen(s).",
+    "selectionMode": "direct",
+    "baseUrl": "http://localhost:3001"
+  },
+  "scope": null,
+  "selection": [
+    {
+      "stageId": "primary-flow",
+      "stageTitle": "Duel Cerdas playable demo",
+      "screenIds": [
+        "home",
+        "worlds",
+        "tv-lobby",
+        "tv-arena",
+        "results",
+        "controller"
+      ],
+      "screenLabels": [
+        "Homepage",
+        "Learning worlds",
+        "Smart TV lobby",
+        "Smart TV arena",
+        "Game results",
+        "Teacher controller"
+      ],
+      "viewportIds": [
+        "tablet-768",
+        "tv-1920",
+        "tv-1280"
+      ]
+    }
+  ],
+  "artifacts": {
+    "notes": "ui-evidence/screenshots/snapshots/20261012-145553--tv-responsive/notes.en.md",
+    "report": "ui-evidence/screenshots/snapshots/20261012-145553--tv-responsive/report.en.md",
+    "manifest": "ui-evidence/screenshots/snapshots/20261012-145553--tv-responsive/manifest.json",
+    "review": "ui-evidence/screenshots/snapshots/20261012-145553--tv-responsive/review/index.html",
+    "current": [
+      "ui-evidence/screenshots/snapshots/20261012-145553--tv-responsive/captures/primary-flow/home__default__tablet-768__current.png",
+      "ui-evidence/screenshots/snapshots/20261012-145553--tv-responsive/captures/primary-flow/worlds__default__tablet-768__current.png",
+      "ui-evidence/screenshots/snapshots/20261012-145553--tv-responsive/captures/primary-flow/tv-lobby__default__tablet-768__current.png",
+      "ui-evidence/screenshots/snapshots/20261012-145553--tv-responsive/captures/primary-flow/tv-arena__default__tablet-768__current.png",
+      "ui-evidence/screenshots/snapshots/20261012-145553--tv-responsive/captures/primary-flow/results__default__tablet-768__current.png",
+      "ui-evidence/screenshots/snapshots/20261012-145553--tv-responsive/captures/primary-flow/controller__default__tablet-768__current.png",
+      "ui-evidence/screenshots/snapshots/20261012-145553--tv-responsive/captures/primary-flow/home__default__tv-1920__current.png",
+      "ui-evidence/screenshots/snapshots/20261012-145553--tv-responsive/captures/primary-flow/worlds__default__tv-1920__current.png",
+      "ui-evidence/screenshots/snapshots/20261012-145553--tv-responsive/captures/primary-flow/tv-lobby__default__tv-1920__current.png",
+      "ui-evidence/screenshots/snapshots/20261012-145553--tv-responsive/captures/primary-flow/tv-arena__default__tv-1920__current.png",
+      "ui-evidence/screenshots/snapshots/20261012-145553--tv-responsive/captures/primary-flow/results__default__tv-1920__current.png",
+      "ui-evidence/screenshots/snapshots/20261012-145553--tv-responsive/captures/primary-flow/controller__default__tv-1920__current.png",
+      "ui-evidence/screenshots/snapshots/20261012-145553--tv-responsive/captures/primary-flow/home__default__tv-1280__current.png",
+      "ui-evidence/screenshots/snapshots/20261012-145553--tv-responsive/captures/primary-flow/worlds__default__tv-1280__current.png",
+      "ui-evidence/screenshots/snapshots/20261012-145553--tv-responsive/captures/primary-flow/tv-lobby__default__tv-1280__current.png",
+      "ui-evidence/screenshots/snapshots/20261012-145553--tv-responsive/captures/primary-flow/tv-arena__default__tv-1280__current.png",
+      "ui-evidence/screenshots/snapshots/20261012-145553--tv-responsive/captures/primary-flow/results__default__tv-1280__current.png",
+      "ui-evidence/screenshots/snapshots/20261012-145553--tv-responsive/captures/primary-flow/controller__default__tv-1280__current.png"
+    ],
+    "overviews": [
+      "ui-evidence/screenshots/snapshots/20261012-145553--tv-responsive/overview/primary-flow__tablet-768__snapshot-overview.png",
+      "ui-evidence/screenshots/snapshots/20261012-145553--tv-responsive/overview/primary-flow__tv-1920__snapshot-overview.png",
+      "ui-evidence/screenshots/snapshots/20261012-145553--tv-responsive/overview/primary-flow__tv-1280__snapshot-overview.png"
+    ]
+  },
+  "bundle": {
+    "selfContained": true,
+    "origin": "snapshot-run"
+  },
+  "failures": [],
+  "captures": [
+    {
+      "stageId": "primary-flow",
+      "stageTitle": "Duel Cerdas playable demo",
+      "screenId": "home",
+      "fileId": "home",
+      "label": "Homepage",
+      "locale": "default",
+      "viewportId": "tablet-768",
+      "current": "ui-evidence/screenshots/snapshots/20261012-145553--tv-responsive/captures/primary-flow/home__default__tablet-768__current.png"
+    },
+    {
+      "stageId": "primary-flow",
+      "stageTitle": "Duel Cerdas playable demo",
+      "screenId": "worlds",
+      "fileId": "worlds",
+      "label": "Learning worlds",
+      "locale": "default",
+      "viewportId": "tablet-768",
+      "current": "ui-evidence/screenshots/snapshots/20261012-145553--tv-responsive/captures/primary-flow/worlds__default__tablet-768__current.png"
+    },
+    {
+      "stageId": "primary-flow",
+      "stageTitle": "Duel Cerdas playable demo",
+      "screenId": "tv-lobby",
+      "fileId": "tv-lobby",
+      "label": "Smart TV lobby",
+      "locale": "default",
+      "viewportId": "tablet-768",
+      "current": "ui-evidence/screenshots/snapshots/20261012-145553--tv-responsive/captures/primary-flow/tv-lobby__default__tablet-768__current.png"
+    },
+    {
+      "stageId": "primary-flow",
+      "stageTitle": "Duel Cerdas playable demo",
+      "screenId": "tv-arena",
+      "fileId": "tv-arena",
+      "label": "Smart TV arena",
+      "locale": "default",
+      "viewportId": "tablet-768",
+      "current": "ui-evidence/screenshots/snapshots/20261012-145553--tv-responsive/captures/primary-flow/tv-arena__default__tablet-768__current.png"
+    },
+    {
+      "stageId": "primary-flow",
+      "stageTitle": "Duel Cerdas playable demo",
+      "screenId": "results",
+      "fileId": "results",
+      "label": "Game results",
+      "locale": "default",
+      "viewportId": "tablet-768",
+      "current": "ui-evidence/screenshots/snapshots/20261012-145553--tv-responsive/captures/primary-flow/results__default__tablet-768__current.png"
+    },
+    {
+      "stageId": "primary-flow",
+      "stageTitle": "Duel Cerdas playable demo",
+      "screenId": "controller",
+      "fileId": "controller",
+      "label": "Teacher controller",
+      "locale": "default",
+      "viewportId": "tablet-768",
+      "current": "ui-evidence/screenshots/snapshots/20261012-145553--tv-responsive/captures/primary-flow/controller__default__tablet-768__current.png"
+    },
+    {
+      "stageId": "primary-flow",
+      "stageTitle": "Duel Cerdas playable demo",
+      "screenId": "home",
+      "fileId": "home",
+      "label": "Homepage",
+      "locale": "default",
+      "viewportId": "tv-1920",
+      "current": "ui-evidence/screenshots/snapshots/20261012-145553--tv-responsive/captures/primary-flow/home__default__tv-1920__current.png"
+    },
+    {
+      "stageId": "primary-flow",
+      "stageTitle": "Duel Cerdas playable demo",
+      "screenId": "worlds",
+      "fileId": "worlds",
+      "label": "Learning worlds",
+      "locale": "default",
+      "viewportId": "tv-1920",
+      "current": "ui-evidence/screenshots/snapshots/20261012-145553--tv-responsive/captures/primary-flow/worlds__default__tv-1920__current.png"
+    },
+    {
+      "stageId": "primary-flow",
+      "stageTitle": "Duel Cerdas playable demo",
+      "screenId": "tv-lobby",
+      "fileId": "tv-lobby",
+      "label": "Smart TV lobby",
+      "locale": "default",
+      "viewportId": "tv-1920",
+      "current": "ui-evidence/screenshots/snapshots/20261012-145553--tv-responsive/captures/primary-flow/tv-lobby__default__tv-1920__current.png"
+    },
+    {
+      "stageId": "primary-flow",
+      "stageTitle": "Duel Cerdas playable demo",
+      "screenId": "tv-arena",
+      "fileId": "tv-arena",
+      "label": "Smart TV arena",
+      "locale": "default",
+      "viewportId": "tv-1920",
+      "current": "ui-evidence/screenshots/snapshots/20261012-145553--tv-responsive/captures/primary-flow/tv-arena__default__tv-1920__current.png"
+    },
+    {
+      "stageId": "primary-flow",
+      "stageTitle": "Duel Cerdas playable demo",
+      "screenId": "results",
+      "fileId": "results",
+      "label": "Game results",
+      "locale": "default",
+      "viewportId": "tv-1920",
+      "current": "ui-evidence/screenshots/snapshots/20261012-145553--tv-responsive/captures/primary-flow/results__default__tv-1920__current.png"
+    },
+    {
+      "stageId": "primary-flow",
+      "stageTitle": "Duel Cerdas playable demo",
+      "screenId": "controller",
+      "fileId": "controller",
+      "label": "Teacher controller",
+      "locale": "default",
+      "viewportId": "tv-1920",
+      "current": "ui-evidence/screenshots/snapshots/20261012-145553--tv-responsive/captures/primary-flow/controller__default__tv-1920__current.png"
+    },
+    {
+      "stageId": "primary-flow",
+      "stageTitle": "Duel Cerdas playable demo",
+      "screenId": "home",
+      "fileId": "home",
+      "label": "Homepage",
+      "locale": "default",
+      "viewportId": "tv-1280",
+      "current": "ui-evidence/screenshots/snapshots/20261012-145553--tv-responsive/captures/primary-flow/home__default__tv-1280__current.png"
+    },
+    {
+      "stageId": "primary-flow",
+      "stageTitle": "Duel Cerdas playable demo",
+      "screenId": "worlds",
+      "fileId": "worlds",
+      "label": "Learning worlds",
+      "locale": "default",
+      "viewportId": "tv-1280",
+      "current": "ui-evidence/screenshots/snapshots/20261012-145553--tv-responsive/captures/primary-flow/worlds__default__tv-1280__current.png"
+    },
+    {
+      "stageId": "primary-flow",
+      "stageTitle": "Duel Cerdas playable demo",
+      "screenId": "tv-lobby",
+      "fileId": "tv-lobby",
+      "label": "Smart TV lobby",
+      "locale": "default",
+      "viewportId": "tv-1280",
+      "current": "ui-evidence/screenshots/snapshots/20261012-145553--tv-responsive/captures/primary-flow/tv-lobby__default__tv-1280__current.png"
+    },
+    {
+      "stageId": "primary-flow",
+      "stageTitle": "Duel Cerdas playable demo",
+      "screenId": "tv-arena",
+      "fileId": "tv-arena",
+      "label": "Smart TV arena",
+      "locale": "default",
+      "viewportId": "tv-1280",
+      "current": "ui-evidence/screenshots/snapshots/20261012-145553--tv-responsive/captures/primary-flow/tv-arena__default__tv-1280__current.png"
+    },
+    {
+      "stageId": "primary-flow",
+      "stageTitle": "Duel Cerdas playable demo",
+      "screenId": "results",
+      "fileId": "results",
+      "label": "Game results",
+      "locale": "default",
+      "viewportId": "tv-1280",
+      "current": "ui-evidence/screenshots/snapshots/20261012-145553--tv-responsive/captures/primary-flow/results__default__tv-1280__current.png"
+    },
+    {
+      "stageId": "primary-flow",
+      "stageTitle": "Duel Cerdas playable demo",
+      "screenId": "controller",
+      "fileId": "controller",
+      "label": "Teacher controller",
+      "locale": "default",
+      "viewportId": "tv-1280",
+      "current": "ui-evidence/screenshots/snapshots/20261012-145553--tv-responsive/captures/primary-flow/controller__default__tv-1280__current.png"
+    }
+  ],
+  "overviewEntries": [
+    {
+      "stageId": "primary-flow",
+      "stageTitle": "Duel Cerdas playable demo",
+      "viewportId": "tablet-768",
+      "path": "ui-evidence/screenshots/snapshots/20261012-145553--tv-responsive/overview/primary-flow__tablet-768__snapshot-overview.png"
+    },
+    {
+      "stageId": "primary-flow",
+      "stageTitle": "Duel Cerdas playable demo",
+      "viewportId": "tv-1920",
+      "path": "ui-evidence/screenshots/snapshots/20261012-145553--tv-responsive/overview/primary-flow__tv-1920__snapshot-overview.png"
+    },
+    {
+      "stageId": "primary-flow",
+      "stageTitle": "Duel Cerdas playable demo",
+      "viewportId": "tv-1280",
+      "path": "ui-evidence/screenshots/snapshots/20261012-145553--tv-responsive/overview/primary-flow__tv-1280__snapshot-overview.png"
+    }
+  ],
+  "commands": {
+    "rerun": "ui-evidence snapshot --config ui-evidence/config.yaml --stage primary-flow --screens home,worlds,tv-lobby,tv-arena,results,controller --viewports tablet-768,tv-1920,tv-1280 --label tv-responsive",
+    "rebuild": "ui-evidence snapshot --config ui-evidence/config.yaml --stage primary-flow --screens home,worlds,tv-lobby,tv-arena,results,controller --viewports tablet-768,tv-1920,tv-1280 --label tv-responsive"
+  },
+  "counts": {
+    "stages": 1,
+    "screens": 6,
+    "expectedCaptures": 18,
+    "captures": 18,
+    "overviews": 3,
+    "failedCaptures": 0
+  }
+}

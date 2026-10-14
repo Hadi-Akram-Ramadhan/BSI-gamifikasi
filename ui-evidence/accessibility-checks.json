@@ -1,0 +1,30 @@
+[
+  {
+    "route": "/",
+    "violations": []
+  },
+  {
+    "route": "/materi",
+    "violations": []
+  },
+  {
+    "route": "/materi/berbagi",
+    "violations": []
+  },
+  {
+    "route": "/tabunganku",
+    "violations": []
+  },
+  {
+    "route": "/guru/game/CERDAS42",
+    "violations": []
+  },
+  {
+    "route": "/tv/CERDAS42/arena",
+    "violations": []
+  },
+  {
+    "route": "/join",
+    "violations": []
+  }
+]

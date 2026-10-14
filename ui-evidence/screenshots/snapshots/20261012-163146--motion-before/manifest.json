@@ -1,0 +1,143 @@
+{
+  "version": 1,
+  "kind": "snapshot-run",
+  "generatedAt": "2026-10-12T16:31:46.959Z",
+  "run": {
+    "id": "20261012-163146--motion-before",
+    "label": "motion-before",
+    "title": "Current UI Snapshot · motion-before",
+    "description": "Current UI snapshot for 1 stage(s) and 6 selected screen(s).",
+    "selectionMode": "direct",
+    "baseUrl": "http://127.0.0.1:3002"
+  },
+  "scope": null,
+  "selection": [
+    {
+      "stageId": "primary-flow",
+      "stageTitle": "Duel Cerdas playable demo",
+      "screenIds": [
+        "home",
+        "worlds",
+        "mini-game",
+        "savings",
+        "tv-arena",
+        "results"
+      ],
+      "screenLabels": [
+        "Homepage",
+        "Learning worlds",
+        "Sort needs and wants",
+        "Savings simulation",
+        "Smart TV arena",
+        "Game results"
+      ],
+      "viewportIds": [
+        "desktop-1440"
+      ]
+    }
+  ],
+  "artifacts": {
+    "notes": "ui-evidence/screenshots/snapshots/20261012-163146--motion-before/notes.en.md",
+    "report": "ui-evidence/screenshots/snapshots/20261012-163146--motion-before/report.en.md",
+    "manifest": "ui-evidence/screenshots/snapshots/20261012-163146--motion-before/manifest.json",
+    "review": "ui-evidence/screenshots/snapshots/20261012-163146--motion-before/review/index.html",
+    "current": [
+      "ui-evidence/screenshots/snapshots/20261012-163146--motion-before/captures/primary-flow/home__default__desktop-1440__current.png",
+      "ui-evidence/screenshots/snapshots/20261012-163146--motion-before/captures/primary-flow/worlds__default__desktop-1440__current.png",
+      "ui-evidence/screenshots/snapshots/20261012-163146--motion-before/captures/primary-flow/mini-game__default__desktop-1440__current.png",
+      "ui-evidence/screenshots/snapshots/20261012-163146--motion-before/captures/primary-flow/savings__default__desktop-1440__current.png",
+      "ui-evidence/screenshots/snapshots/20261012-163146--motion-before/captures/primary-flow/tv-arena__default__desktop-1440__current.png",
+      "ui-evidence/screenshots/snapshots/20261012-163146--motion-before/captures/primary-flow/results__default__desktop-1440__current.png"
+    ],
+    "overviews": [
+      "ui-evidence/screenshots/snapshots/20261012-163146--motion-before/overview/primary-flow__desktop-1440__snapshot-overview.png"
+    ]
+  },
+  "bundle": {
+    "selfContained": true,
+    "origin": "snapshot-run"
+  },
+  "failures": [],
+  "captures": [
+    {
+      "stageId": "primary-flow",
+      "stageTitle": "Duel Cerdas playable demo",
+      "screenId": "home",
+      "fileId": "home",
+      "label": "Homepage",
+      "locale": "default",
+      "viewportId": "desktop-1440",
+      "current": "ui-evidence/screenshots/snapshots/20261012-163146--motion-before/captures/primary-flow/home__default__desktop-1440__current.png"
+    },
+    {
+      "stageId": "primary-flow",
+      "stageTitle": "Duel Cerdas playable demo",
+      "screenId": "worlds",
+      "fileId": "worlds",
+      "label": "Learning worlds",
+      "locale": "default",
+      "viewportId": "desktop-1440",
+      "current": "ui-evidence/screenshots/snapshots/20261012-163146--motion-before/captures/primary-flow/worlds__default__desktop-1440__current.png"
+    },
+    {
+      "stageId": "primary-flow",
+      "stageTitle": "Duel Cerdas playable demo",
+      "screenId": "mini-game",
+      "fileId": "mini-game",
+      "label": "Sort needs and wants",
+      "locale": "default",
+      "viewportId": "desktop-1440",
+      "current": "ui-evidence/screenshots/snapshots/20261012-163146--motion-before/captures/primary-flow/mini-game__default__desktop-1440__current.png"
+    },
+    {
+      "stageId": "primary-flow",
+      "stageTitle": "Duel Cerdas playable demo",
+      "screenId": "savings",
+      "fileId": "savings",
+      "label": "Savings simulation",
+      "locale": "default",
+      "viewportId": "desktop-1440",
+      "current": "ui-evidence/screenshots/snapshots/20261012-163146--motion-before/captures/primary-flow/savings__default__desktop-1440__current.png"
+    },
+    {
+      "stageId": "primary-flow",
+      "stageTitle": "Duel Cerdas playable demo",
+      "screenId": "tv-arena",
+      "fileId": "tv-arena",
+      "label": "Smart TV arena",
+      "locale": "default",
+      "viewportId": "desktop-1440",
+      "current": "ui-evidence/screenshots/snapshots/20261012-163146--motion-before/captures/primary-flow/tv-arena__default__desktop-1440__current.png"
+    },
+    {
+      "stageId": "primary-flow",
+      "stageTitle": "Duel Cerdas playable demo",
+      "screenId": "results",
+      "fileId": "results",
+      "label": "Game results",
+      "locale": "default",
+      "viewportId": "desktop-1440",
+      "current": "ui-evidence/screenshots/snapshots/20261012-163146--motion-before/captures/primary-flow/results__default__desktop-1440__current.png"
+    }
+  ],
+  "overviewEntries": [
+    {
+      "stageId": "primary-flow",
+      "stageTitle": "Duel Cerdas playable demo",
+      "viewportId": "desktop-1440",
+      "path": "ui-evidence/screenshots/snapshots/20261012-163146--motion-before/overview/primary-flow__desktop-1440__snapshot-overview.png"
+    }
+  ],
+  "commands": {
+    "rerun": "ui-evidence snapshot --config ui-evidence/config.yaml --stage primary-flow --screens home,worlds,mini-game,savings,tv-arena,results --viewports desktop-1440 --label motion-before",
+    "rebuild": "ui-evidence snapshot --config ui-evidence/config.yaml --stage primary-flow --screens home,worlds,mini-game,savings,tv-arena,results --viewports desktop-1440 --label motion-before"
+  },
+  "counts": {
+    "stages": 1,
+    "screens": 6,
+    "expectedCaptures": 6,
+    "captures": 6,
+    "overviews": 1,
+    "failedCaptures": 0
+  }
+}
