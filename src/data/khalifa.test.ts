@@ -2,7 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import fs from "node:fs";
 import path from "node:path";
-import { topics, questions, badges, rupiah } from "./content.ts";
+import { topics, questions, rupiah } from "./content.ts";
 
 test("KHALIFA Educational Topics Integrity", () => {
   assert.equal(topics.length, 6, "Must have exactly 6 learning worlds");

@@ -4,7 +4,7 @@ import Link from "next/link";
 import * as Dialog from "@radix-ui/react-dialog";
 import * as AlertDialog from "@radix-ui/react-alert-dialog";
 import { QRCodeSVG } from "qrcode.react";
-import { ArrowRight, BookOpen, Heart, Landmark, Plus, Sparkles, Trophy, Wallet, X } from "lucide-react";
+import { ArrowRight, BookOpen, Heart, Plus, Sparkles, Trophy, Wallet, X } from "lucide-react";
 import { badges, rupiah, topics, questions } from "@/data/content";
 import { resetDemo, recordSavings, update, useStore } from "@/lib/store";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
@@ -896,8 +896,8 @@ export function About() {
         <h3 className="spacer-top">Tiga Nilai Beyond Banking BSI</h3>
         <p className="spacer-top">
           1. <strong>Sahabat Finansial:</strong> Melatih pembedaan hajat (kebutuhan) vs syahwat (keinginan), target tabungan berkah, dan pengenalan Tabungan SimPel BSI iB.<br/>
-          2. <strong>Sahabat Sosial:</strong> Menumbuhkan empati berbagi sedekah dan infak Jum'at secara rutin melalui kompartemen saku khusus.<br/>
-          3. <strong>Sahabat Spiritual:</strong> Menanamkan nilai kejujuran, harta barakah, dan sifat qana'ah sejak dini.
+          2. <strong>Sahabat Sosial:</strong> Menumbuhkan empati berbagi sedekah dan infak Jum&apos;at secara rutin melalui kompartemen saku khusus.<br/>
+          3. <strong>Sahabat Spiritual:</strong> Menanamkan nilai kejujuran, harta barakah, dan sifat qana&apos;ah sejak dini.
         </p>
         <h3 className="spacer-top">Privasi & Simulasi Belajar</h3>
         <p className="spacer-top">

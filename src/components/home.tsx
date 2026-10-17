@@ -9,13 +9,11 @@ import {
   Gamepad2,
   GraduationCap,
   Landmark,
-  ShieldCheck,
   Sparkles,
   Star,
   Swords,
   Trophy,
   Users,
-  Wallet,
 } from "lucide-react";
 import { useStore } from "@/lib/store";
 import { topics, Topic } from "@/data/content";
