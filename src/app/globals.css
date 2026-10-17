@@ -3906,3 +3906,242 @@ td strong {
   text-align: center;
   margin: 10px 0;
 }
+
+/* ============================================================
+   KHALIFA DESIGN SYSTEM ENHANCEMENTS: SDN 02 JEMBER KIDUL
+   ============================================================ */
+
+/* Brand mark SVG */
+.brand-mark.khalifa-brand-mark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  padding: 6px;
+  background: linear-gradient(135deg, #00A39E 0%, #047857 100%);
+  border-radius: 13px;
+  box-shadow: 0 4px 14px rgba(0, 163, 158, 0.28), 0 2px 0 #025940;
+  transform: rotate(-3deg);
+  flex-shrink: 0;
+  transition: transform 0.2s cubic-bezier(0.2, 0, 0, 1);
+}
+.brand-mark.khalifa-brand-mark:hover {
+  transform: rotate(0deg) scale(1.06);
+}
+.brand-mark.khalifa-brand-mark svg {
+  width: 100%;
+  height: 100%;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.2));
+}
+
+/* School Partner Bar */
+.school-partner-bar {
+  background: #ffffff;
+  border: 1px solid var(--line, #e2e8f0);
+  border-radius: 18px;
+  padding: 16px 24px;
+  margin: 12px 0 28px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+}
+.partner-badge-kicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-display);
+  font-size: 13px;
+  font-weight: 700;
+  color: #047857;
+  background: #ecfdf5;
+  border: 1px solid #a7f3d0;
+  padding: 6px 14px;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+.partner-content {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.partner-item {
+  display: flex;
+  flex-direction: column;
+}
+.partner-item strong {
+  font-size: 13px;
+  font-weight: 800;
+  color: #1f2937;
+}
+.partner-item small {
+  font-size: 11px;
+  color: #6b7280;
+}
+.partner-dot {
+  color: #cbd5e1;
+  font-weight: bold;
+}
+
+/* 3 Pillars of KHALIFA */
+.pillars-section {
+  margin: 40px 0 36px;
+}
+.pillars-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  margin-top: 18px;
+}
+.pillar-card {
+  background: #ffffff;
+  border: 1.5px solid var(--line, #e2e8f0);
+  border-radius: 20px;
+  padding: 24px 22px;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.22s cubic-bezier(0.2, 0, 0, 1), box-shadow 0.22s ease;
+  position: relative;
+  overflow: hidden;
+}
+.pillar-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 5px;
+}
+.pillar-workbook {
+  border-top-color: #00A39E;
+  box-shadow: 0 6px 0 #ccfbf1, 0 10px 20px rgba(0, 163, 158, 0.08);
+}
+.pillar-workbook::before {
+  background: linear-gradient(90deg, #00A39E, #10B981);
+}
+.pillar-gamification {
+  border-top-color: #3b82f6;
+  box-shadow: 0 6px 0 #dbeafe, 0 10px 20px rgba(59, 130, 246, 0.08);
+}
+.pillar-gamification::before {
+  background: linear-gradient(90deg, #3b82f6, #6366f1);
+}
+.pillar-teacher {
+  border-top-color: #f59e0b;
+  box-shadow: 0 6px 0 #fef3c7, 0 10px 20px rgba(245, 158, 11, 0.08);
+}
+.pillar-teacher::before {
+  background: linear-gradient(90deg, #f59e0b, #ec4899);
+}
+
+.pillar-card:hover {
+  transform: translateY(-5px);
+}
+.pillar-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+.pillar-badge {
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  color: #4b5563;
+  background: #f3f4f6;
+  padding: 4px 10px;
+  border-radius: 999px;
+}
+.pillar-icon-box {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  flex-shrink: 0;
+}
+.pillar-icon-box.bg-mint {
+  background: linear-gradient(135deg, #00A39E, #059669);
+  box-shadow: 0 4px 10px rgba(5, 150, 105, 0.3);
+}
+.pillar-icon-box.bg-blue {
+  background: linear-gradient(135deg, #2563EB, #3B82F6);
+  box-shadow: 0 4px 10px rgba(37, 99, 235, 0.3);
+}
+.pillar-icon-box.bg-peach {
+  background: linear-gradient(135deg, #D97706, #F59E0B);
+  box-shadow: 0 4px 10px rgba(217, 119, 6, 0.3);
+}
+
+.pillar-card h3 {
+  font-size: 21px;
+  font-family: var(--font-display);
+  font-weight: 700;
+  color: #111827;
+  margin: 0 0 10px;
+}
+.pillar-card p {
+  font-size: 13.5px;
+  line-height: 1.55;
+  color: #4b5563;
+  margin: 0 0 16px;
+  flex: 1;
+}
+.pillar-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  margin-bottom: 16px;
+}
+.pillar-tags span {
+  font-size: 11px;
+  font-weight: 700;
+  color: #374151;
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  padding: 3px 8px;
+  border-radius: 8px;
+}
+.pillar-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--primary-dark, #065f46);
+  text-decoration: none;
+  margin-top: auto;
+  transition: transform 0.15s ease;
+}
+.pillar-link:hover {
+  transform: translateX(4px);
+}
+
+/* Responsiveness for pillars and school bar */
+@media (max-width: 960px) {
+  .pillars-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+  .school-partner-bar {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 16px;
+  }
+  .partner-content {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  .partner-dot {
+    display: none;
+  }
+}

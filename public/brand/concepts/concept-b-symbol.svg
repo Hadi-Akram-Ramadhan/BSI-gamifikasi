@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="256" height="256">
+  <title>KHALIFA - Concept B (Buku Amanah)</title>
+  <path d="M 122 196 C 94 182 62 182 34 192 C 30 194 26 190 26 186 L 26 66 C 26 62 30 58 34 56 C 62 46 94 46 122 60 Z" fill="#111827"/>
+  <path d="M 134 196 C 162 182 194 182 222 192 C 226 194 230 190 230 186 L 230 66 C 230 62 226 58 222 56 C 194 46 162 46 134 60 Z" fill="#111827"/>
+  <path d="M 128 32 L 134 46 L 148 46 L 136 54 L 140 68 L 128 60 L 116 68 L 120 54 L 108 46 L 122 46 Z" fill="#111827"/>
+  <line x1="128" y1="68" x2="128" y2="200" stroke="#FFFFFF" stroke-width="6" stroke-linecap="round"/>
+</svg>

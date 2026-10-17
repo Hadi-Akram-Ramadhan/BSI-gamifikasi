@@ -6,9 +6,13 @@ import "./globals.css";
 const body = Nunito({ variable: "--font-body", subsets: ["latin"] });
 const display = Fredoka({ variable: "--font-display", subsets: ["latin"] });
 export const metadata: Metadata = {
-  title: "Duel Cerdas — Jago Atur Uang!",
+  title: "KHALIFA — Ekosistem Literasi Keuangan Syariah SDN 02 Jember Kidul",
   description:
-    "Belajar uang, raih bintang, jadi anak cerdas! Petualangan literasi finansial untuk anak Indonesia.",
+    "KHALIFA: Ekosistem Workbook, Gamifikasi, dan Pelatihan Guru untuk Meningkatkan Literasi Keuangan Syariah Siswa Sekolah Dasar di SDN 02 Jember Kidul.",
+  icons: {
+    icon: "/brand/khalifa/favicon.svg",
+    apple: "/brand/khalifa/apple-touch-icon.png",
+  },
 };
 export default function RootLayout({
   children,

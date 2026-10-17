@@ -7,11 +7,15 @@ import {
   ChevronRight,
   Flag,
   Gamepad2,
+  GraduationCap,
+  Landmark,
+  ShieldCheck,
   Sparkles,
   Star,
   Swords,
   Trophy,
   Users,
+  Wallet,
 } from "lucide-react";
 import { useStore } from "@/lib/store";
 import { topics, Topic } from "@/data/content";
@@ -123,6 +127,121 @@ export function DuelCards() {
     </div>
   );
 }
+export function KhalifaPillars() {
+  return (
+    <section className="pillars-section" data-testid="khalifa-pillars">
+      <div className="section-heading">
+        <div>
+          <span className="section-kicker">
+            <Sparkles size={16} /> Pendekatan Phygital Holistik
+          </span>
+          <h2>3 Pilar Ekosistem KHALIFA</h2>
+          <p>
+            Integrasi kebiasaan nyata (offline habit), gamifikasi kelas seru (digital), dan pemberdayaan guru di SDN 02 Jember Kidul.
+          </p>
+        </div>
+        <Link className="text-link" href="/tentang">
+          Pelajari Ekosistem <ArrowRight size={17} />
+        </Link>
+      </div>
+
+      <div className="pillars-grid">
+        {/* Pilar 1: Smart Workbook */}
+        <div className="pillar-card pillar-workbook">
+          <div className="pillar-top">
+            <span className="pillar-badge">Pilar 1 · Offline Habit</span>
+            <div className="pillar-icon-box bg-mint">
+              <BookOpen size={24} />
+            </div>
+          </div>
+          <h3>Smart Workbook KHALIFA</h3>
+          <p>
+            Binder fisik berpartisi <strong>3 Saku Barakah</strong> (Hajat, Impian, Sedekah). Target tabungan terarah Rp100.000 (milestone Rp2.000) dan <em>Dynamic QR Code</em> di setiap bab materi.
+          </p>
+          <div className="pillar-tags">
+            <span>📁 Binder 3 Saku</span>
+            <span>📲 Dynamic QR</span>
+            <span>🪙 Habit Tracker</span>
+          </div>
+          <Link href="/workbook" className="pillar-link">
+            Buka Modul Workbook <ArrowRight size={15} />
+          </Link>
+        </div>
+
+        {/* Pilar 2: Gamifikasi Duel Cerdas */}
+        <div className="pillar-card pillar-gamification">
+          <div className="pillar-top">
+            <span className="pillar-badge">Pilar 2 · Digital Classroom</span>
+            <div className="pillar-icon-box bg-blue">
+              <Gamepad2 size={24} />
+            </div>
+          </div>
+          <h3>Gamifikasi Duel Cerdas</h3>
+          <p>
+            Web App arena kuis interaktif yang dimainkan di Smart TV kelas dan tablet siswa. Mode 1v1 serta Tim <strong>Hijau (BSI)</strong> vs <strong>Oranye (Maslahat)</strong> dengan animasi seru dan maskot Koini.
+          </p>
+          <div className="pillar-tags">
+            <span>📺 Smart TV View</span>
+            <span>⚡ Real-Time Duel</span>
+            <span>🏆 XP & Lencana</span>
+          </div>
+          <Link href="/duel" className="pillar-link">
+            Masuk Arena Duel <ArrowRight size={15} />
+          </Link>
+        </div>
+
+        {/* Pilar 3: Pelatihan & Portal Guru */}
+        <div className="pillar-card pillar-teacher">
+          <div className="pillar-top">
+            <span className="pillar-badge">Pilar 3 · Capacity Building</span>
+            <div className="pillar-icon-box bg-peach">
+              <GraduationCap size={24} />
+            </div>
+          </div>
+          <h3>Pelatihan & Portal Guru</h3>
+          <p>
+            Pemberdayaan wali kelas SDN 02 Jember Kidul untuk mengoperasikan arena TV kelas dalam &lt; 2 menit serta memantau pertumbuhan literasi keuangan syariah murid secara berkelanjutan.
+          </p>
+          <div className="pillar-tags">
+            <span>👩‍🏫 Panduan Fasilitator</span>
+            <span>📊 Dasbor Kelas</span>
+            <span>🌱 Berkelanjutan</span>
+          </div>
+          <Link href="/guru/dashboard" className="pillar-link">
+            Buka Portal Guru <ArrowRight size={15} />
+          </Link>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+export function SchoolPartnerBar() {
+  return (
+    <div className="school-partner-bar" aria-label="Mitra Kolaborasi KHALIFA">
+      <div className="partner-badge-kicker">
+        <Landmark size={17} /> Model Percontohan Sekolah Penggerak
+      </div>
+      <div className="partner-content">
+        <div className="partner-item">
+          <strong>SDN 02 Jember Kidul</strong>
+          <small>Fasilitasi Pilot Kelas 4–6 SD</small>
+        </div>
+        <span className="partner-dot">•</span>
+        <div className="partner-item">
+          <strong>PT Bank Syariah Indonesia Tbk</strong>
+          <small>Regional 4 Jawa Timur · Edukasi SimPel iB</small>
+        </div>
+        <span className="partner-dot">•</span>
+        <div className="partner-item">
+          <strong>BSI Maslahat</strong>
+          <small>Inisiatif Sosial & Penanaman Karakter ZISWAF</small>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export function Home() {
   const s = useStore();
   const reduce = useReducedMotion();
@@ -137,17 +256,15 @@ export function Home() {
             variants={staggerContainer}
           >
             <span className="hero-label">
-              <Sparkles size={15} /> Petualangan kecil, masa depan hebat
+              <Sparkles size={15} /> KHALIFA · SDN 02 JEMBER KIDUL × BSI MASLAHAT
             </span>
             <motion.h1 variants={reduce ? fadeIn : popIn}>
-              Jago atur uang,
+              KHALIFA: Sahabat Finansial Syariah
               <br />
-              seru petualangannya!
+              Siswa Cerdas!
             </motion.h1>
             <motion.p variants={reduce ? fadeIn : slideUp}>
-              Belajar menabung, belanja bijak, dan berbagi.
-              <br className="desktop-break" /> Bersama Koini, jadi jagoan
-              finansial sambil bermain!
+              Ekosistem terintegrasi Workbook Saku Barakah, Gamifikasi Duel Cerdas, dan Pelatihan Guru untuk mencetak generasi mandiri dan berkarakter syariah di SDN 02 Jember Kidul.
             </motion.p>
             <motion.div className="hero-actions" variants={fadeIn}>
               <MotionLink
@@ -160,14 +277,17 @@ export function Home() {
                 <ArrowRight size={18} />
               </MotionLink>
               <Link className="button button-white" href="/duel">
-                <Swords size={20} /> Main Duel
+                <Swords size={20} /> Main Duel Cerdas
+              </Link>
+              <Link className="button button-subtle" href="/guru/dashboard">
+                <GraduationCap size={20} /> Ruang Guru
               </Link>
             </motion.div>
             <div className="hero-note">
               <span>
                 <Check size={13} />
               </span>{" "}
-              Untuk jagoan kelas 4–6 SD <i /> Belajar sesuai langkahmu
+              Pilot Project Kelas 4–6 SDN 02 Jember Kidul <i /> Pendekatan Phygital Islami
             </div>
           </motion.div>
           <AdventureArt />
@@ -185,6 +305,7 @@ export function Home() {
         </svg>
       </section>
       <div className="page-container home-content">
+        <SchoolPartnerBar />
         <section className="welcome-panel">
           <div className="welcome-person">
             <span className="avatar-large">
@@ -229,6 +350,7 @@ export function Home() {
             <ChevronRight />
           </Link>
         </section>
+        <KhalifaPillars />
         <section className="world-section">
           <div className="section-heading">
             <div>

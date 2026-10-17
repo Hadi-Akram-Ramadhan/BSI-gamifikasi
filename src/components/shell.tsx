@@ -22,14 +22,18 @@ import { AnimatedCounter, AnimatedPage } from "./game-motion";
 import { cn } from "@/lib/utils";
 export function Logo() {
   return (
-    <Link href="/" className="brand" aria-label="Duel Cerdas beranda">
-      <span className="brand-mark">
-        d<span>c</span>
-        <Star size={11} fill="currentColor" />
+    <Link href="/" className="brand" aria-label="KHALIFA beranda">
+      <span className="brand-mark khalifa-brand-mark">
+        <svg viewBox="0 0 256 256" width="30" height="30" aria-hidden="true" fill="none">
+          <rect x="44" y="32" width="34" height="192" rx="17" fill="#FFFFFF"/>
+          <path d="M 88 126 C 104 110 128 70 178 44 C 196 34 212 42 212 58 C 212 76 198 100 176 116 C 146 138 116 148 94 148 Z" fill="#6EE7B7"/>
+          <path d="M 88 136 C 114 148 144 176 172 208 C 182 220 174 228 160 228 C 138 228 116 208 98 184 C 86 168 84 148 88 136 Z" fill="#FFFFFF"/>
+          <polygon points="178,108 181.8,119.2 192.1,110.1 187.2,122.9 200.7,121.7 190.4,130.8 202.1,137.9 188.7,139.1 193.6,151.9 183.3,142.8 178,156 172.7,142.8 162.4,151.9 167.3,139.1 153.9,137.9 165.6,130.8 155.3,121.7 168.8,122.9 163.9,110.1 174.2,119.2" fill="#FBBF24"/>
+        </svg>
       </span>
       <span>
-        duel<span className="brand-green">cerdas</span>
-        <small>JAGO ATUR UANG!</small>
+        KHALIFA<span className="brand-green">.id</span>
+        <small>SDN 02 JEMBER KIDUL</small>
       </span>
     </Link>
   );
@@ -39,6 +43,7 @@ const nav = [
   ["/materi", "Dunia Belajar", BookOpen],
   ["/mini-games", "Mini Games", Gamepad2],
   ["/tabunganku", "Tabunganku", Wallet],
+  ["/guru/dashboard", "Ruang Guru", GraduationCap],
   ["/leaderboard", "Papan Juara", Trophy],
 ] as const;
 export function Shell({ children }: { children: React.ReactNode }) {
@@ -143,7 +148,11 @@ export function Shell({ children }: { children: React.ReactNode }) {
         <>
           <footer className="footer">
             <Logo />
-            <p>Belajar uang, raih bintang, jadi anak cerdas!</p>
+            <p>
+              KHALIFA: Ekosistem Workbook, Gamifikasi, dan Pelatihan Guru untuk
+              Meningkatkan Literasi Keuangan Syariah Siswa Sekolah Dasar di SDN
+              02 Jember Kidul.
+            </p>
             <Link href="/workbook">Workbook</Link>
             <Link href="/guru/dashboard">Ruang Guru</Link>
             <Link href="/tentang">Tentang & privasi</Link>
@@ -156,7 +165,7 @@ export function Shell({ children }: { children: React.ReactNode }) {
             </button>
           </footer>
           <div className="demo-footer">
-            Petualangan edukasi • Semua poin dan tabungan adalah simulasi.
+            KHALIFA × SDN 02 Jember Kidul • BSI Maslahat • Seluruh tabungan dan duel adalah simulasi edukatif.
           </div>
           <nav className="mobile-nav" aria-label="Navigasi seluler">
             {nav.map(([href, label, Icon]) => (

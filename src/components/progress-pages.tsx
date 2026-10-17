@@ -4,7 +4,7 @@ import Link from "next/link";
 import * as Dialog from "@radix-ui/react-dialog";
 import * as AlertDialog from "@radix-ui/react-alert-dialog";
 import { QRCodeSVG } from "qrcode.react";
-import { ArrowRight, Plus, Trophy, X } from "lucide-react";
+import { ArrowRight, BookOpen, Heart, Landmark, Plus, Sparkles, Trophy, Wallet, X } from "lucide-react";
 import { badges, rupiah, topics, questions } from "@/data/content";
 import { resetDemo, recordSavings, update, useStore } from "@/lib/store";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
@@ -594,13 +594,82 @@ export function Workbook() {
   return (
     <div className="page-container content-page">
       <PageHeading
-        title="Dari buku, lanjut berpetualang!"
-        subtitle="Pindai kode pada workbook untuk membuka dunia belajarmu. Kamu juga bisa mengetuk tombolnya."
+        title="Smart Workbook KHALIFA"
+        subtitle="Pilar 1: Hubungkan binder fisik 3 Saku Barakah dengan modul petualangan digital di SDN 02 Jember Kidul."
       />
+
+      <div className="pillars-grid spacer-bottom" style={{ marginBottom: "2.5rem" }}>
+        <div className="pillar-card pillar-workbook">
+          <div className="pillar-top">
+            <span className="pillar-badge">Saku 1</span>
+            <div className="pillar-icon-box bg-mint">
+              <Wallet size={22} />
+            </div>
+          </div>
+          <h3>Saku Hajat</h3>
+          <p>
+            Alokasi kebutuhan primer sekolah: buku tulis, pensil, dan ongkos harian. Mengajarkan disiplin membedakan kebutuhan dari keinginan.
+          </p>
+          <div className="pillar-tags">
+            <span>🎒 Kebutuhan Pokok</span>
+            <span>📝 Perlengkapan</span>
+          </div>
+        </div>
+
+        <div className="pillar-card pillar-gamification">
+          <div className="pillar-top">
+            <span className="pillar-badge">Saku 2</span>
+            <div className="pillar-icon-box bg-blue">
+              <Sparkles size={22} />
+            </div>
+          </div>
+          <h3>Saku Impian</h3>
+          <p>
+            Target tabungan jangka menengah Rp100.000 dengan milestone 50 stiker (Rp2.000/stiker) di lembar fisik binder murid.
+          </p>
+          <div className="pillar-tags">
+            <span>🎯 Target Rp100.000</span>
+            <span>🪙 50 Stiker</span>
+          </div>
+          <Link href="/tabunganku" className="pillar-link">
+            Cek Tabungan Digital <ArrowRight size={15} />
+          </Link>
+        </div>
+
+        <div className="pillar-card pillar-teacher">
+          <div className="pillar-top">
+            <span className="pillar-badge">Saku 3</span>
+            <div className="pillar-icon-box bg-peach">
+              <Heart size={22} />
+            </div>
+          </div>
+          <h3>Saku Sedekah</h3>
+          <p>
+            Pembiasaan berbagi infak dan sedekah sukarela. Mengakar pada nilai kepedulian sosial Islam bersama inisiatif BSI Maslahat.
+          </p>
+          <div className="pillar-tags">
+            <span>🤲 ZISWAF</span>
+            <span>🤝 BSI Maslahat</span>
+          </div>
+        </div>
+      </div>
+
+      <div className="section-heading">
+        <div>
+          <span className="section-kicker">
+            <BookOpen size={16} /> Dynamic QR Code Bab Materi
+          </span>
+          <h2>Pindai Bab Belajar</h2>
+          <p>
+            Gunakan kamera ponsel atau tablet untuk langsung membuka tantangan interaktif dari lembar fisik binder KHALIFA.
+          </p>
+        </div>
+      </div>
+
       <div className="qr-grid">
         {topics.map((t, i) => (
           <div className="qr-card" key={t.slug}>
-            <span className="status-pill">Workbook · Dunia {i + 1}</span>
+            <span className="status-pill">Workbook · Bab {i + 1}</span>
             <QRCodeSVG
               value={`${origin}/materi/${t.slug}`}
               size={145}
@@ -614,9 +683,7 @@ export function Workbook() {
         ))}
       </div>
       <div className="note spacer-top">
-        Kode mengarah ke alamat situs ini. Alamat localhost tidak dapat dibuka
-        langsung dari perangkat lain. Pencatatan buku dan uang dilakukan
-        sendiri, tanpa verifikasi otomatis.
+        Kode QR mengarah langsung ke modul belajar KHALIFA SDN 02 Jember Kidul. Seluruh catatan fisik dapat disinkronkan melalui simulasi Tabunganku dan arena Duel Cerdas.
       </div>
     </div>
   );
@@ -652,19 +719,19 @@ export function Teacher({ section = "dashboard" }: { section?: string }) {
   const [filter, setFilter] = useState("all");
   const title =
     section === "kelas"
-      ? "Kelas petualang"
+      ? "Kelas Petualang KHALIFA"
       : section === "laporan"
-        ? "Laporan belajar"
+        ? "Laporan Belajar & Literasi"
         : section === "soal"
-          ? "Bank soal"
+          ? "Bank Soal Finansial Syariah"
           : section === "admin"
-            ? "Ikhtisar konten"
-            : "Selamat datang, Bapak / Ibu Guru";
+            ? "Ikhtisar Konten & Modul"
+            : "Portal Fasilitator Guru SDN 02 Jember Kidul";
   return (
     <div className="page-container content-page">
       <PageHeading
         title={title}
-        subtitle="Ruang pendamping belajar · Seluruh identitas dan statistik kelas adalah data demonstrasi."
+        subtitle="Pilar 3: Pelatihan & Dasbor Guru SDN 02 Jember Kidul · Monitoring Pembelajaran Phygital & Duel Cerdas TV Kelas."
       />
       <div className="actions-row">
         <Link className="button" href="/guru/game/buat">
@@ -816,29 +883,29 @@ export function Teacher({ section = "dashboard" }: { section?: string }) {
 export function About() {
   return (
     <div className="page-container content-page narrow">
-      <PageHeading title="Belajar uang dengan gembira" />
+      <PageHeading title="Tentang Ekosistem KHALIFA" />
       <div className="paper">
         <Mascot />
-        <h2>Duel Cerdas — Jago Atur Uang</h2>
+        <h2>KHALIFA: Ekosistem Literasi Keuangan Syariah</h2>
+        <span className="status-pill spacer-top">SDN 02 Jember Kidul × BSI Maslahat</span>
         <p className="spacer-top">
-          Petualangan literasi keuangan dan nilai berbagi untuk anak kelas 4–6
-          SD. Belajar bersama Koini melalui enam dunia, latihan, dan duel kelas.
+          KHALIFA adalah ekosistem terintegrasi yang memadukan <strong>Smart Workbook Saku Barakah (Offline Habit)</strong>,
+          <strong> Gamifikasi Duel Cerdas Smart TV (Digital Classroom)</strong>, dan <strong>Pelatihan Guru (Capacity Building)</strong>
+          untuk meningkatkan indeks literasi dan inklusi keuangan syariah bagi siswa sekolah dasar di SDN 02 Jember Kidul.
         </p>
-        <h3 className="spacer-top">Privasi dalam demo</h3>
+        <h3 className="spacer-top">Tiga Nilai Beyond Banking BSI</h3>
         <p className="spacer-top">
-          Nama panggilan, progres, dan catatan simulasi disimpan di browser ini.
-          Tidak ada akun, transaksi uang, atau layanan bank. Hindari mengisi
-          nama lengkap atau informasi pribadi. Data bisa dihapus lewat Reset
-          Data Demo di profil.
+          1. <strong>Sahabat Finansial:</strong> Melatih pembedaan hajat (kebutuhan) vs syahwat (keinginan), target tabungan berkah, dan pengenalan Tabungan SimPel BSI iB.<br/>
+          2. <strong>Sahabat Sosial:</strong> Menumbuhkan empati berbagi sedekah dan infak Jum'at secara rutin melalui kompartemen saku khusus.<br/>
+          3. <strong>Sahabat Spiritual:</strong> Menanamkan nilai kejujuran, harta barakah, dan sifat qana'ah sejak dini.
         </p>
-        <h3 className="spacer-top">Untuk pendamping</h3>
+        <h3 className="spacer-top">Privasi & Simulasi Belajar</h3>
         <p className="spacer-top">
-          Gunakan cerita sebagai bahan diskusi. Kebutuhan tiap keluarga berbeda.
-          Ajak anak menabung dan berbagi sesuai kemampuan, tanpa membandingkan
-          keadaan ekonomi.
+          Nama panggilan, progres bintang, dan catatan simulasi tabungan disimpan secara aman di browser lokal.
+          Seluruh mata uang dan transaksi dalam platform ini adalah media edukasi interaktif.
         </p>
         <Link href="/guru/dashboard" className="button spacer-top">
-          Buka ruang guru
+          Buka Portal Ruang Guru
         </Link>
       </div>
     </div>
