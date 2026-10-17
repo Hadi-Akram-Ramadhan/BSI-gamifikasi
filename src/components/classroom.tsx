@@ -15,7 +15,16 @@ import {
   Users,
 } from "lucide-react";
 import { topics, questions } from "@/data/content";
-import { createRoom, gameAction, Room, Team, useStore } from "@/lib/store";
+import {
+  createRoom,
+  findRoom,
+  gameAction,
+  getRoom,
+  Room,
+  Team,
+  update,
+  useStore,
+} from "@/lib/store";
 import { cn } from "@/lib/utils";
 import { Mascot } from "./art";
 import { EmptyState, Logo } from "./shell";
@@ -369,11 +378,27 @@ function Result({ room }: { room: Room }) {
 }
 export function TVView({ code, view }: { code: string; view?: string }) {
   const s = useStore();
-  const room = s.rooms[code];
+  const room = findRoom(s.rooms, code) || getRoom(code);
   const now = useClock(room);
   const origin = useOrigin();
   const router = useRouter();
   const [copied, setCopied] = useState(false);
+
+  useEffect(() => {
+    if (room || typeof window === "undefined") return;
+    const clean = code.trim().toUpperCase().replace(/[^A-Z0-9]/g, "");
+    fetch(`/api/rooms/${clean}`)
+      .then((r) => (r.ok ? r.json() : null))
+      .then((serverRoom) => {
+        if (serverRoom && serverRoom.code) {
+          update((state) => {
+            state.rooms[serverRoom.code] = serverRoom;
+          });
+        }
+      })
+      .catch(() => {});
+  }, [room, code]);
+
   useEffect(() => {
     if (!room) return;
     const expected =
@@ -383,13 +408,13 @@ export function TVView({ code, view }: { code: string; view?: string }) {
           ? ""
           : "arena";
     if ((view || "") !== expected)
-      router.replace(`/tv/${code}${expected ? `/${expected}` : ""}`);
+      router.replace(`/tv/${room.code}${expected ? `/${expected}` : ""}`);
   }, [room, code, view, router]);
   if (!room)
     return (
       <EmptyState
         title="Room belum ditemukan"
-        text="Buat room di ruang guru pada browser yang sama, lalu buka tautan TV-nya."
+        text="Periksa kode room atau pastikan room dibuat melalui Ruang Guru."
       />
     );
   const q = questions.find((q) => q.id === room.questionIds[room.index])!;
@@ -565,8 +590,24 @@ export function TVView({ code, view }: { code: string; view?: string }) {
 }
 export function Controller({ code }: { code: string }) {
   const s = useStore();
-  const room = s.rooms[code];
+  const room = findRoom(s.rooms, code) || getRoom(code);
   const now = useClock(room);
+
+  useEffect(() => {
+    if (room || typeof window === "undefined") return;
+    const clean = code.trim().toUpperCase().replace(/[^A-Z0-9]/g, "");
+    fetch(`/api/rooms/${clean}`)
+      .then((r) => (r.ok ? r.json() : null))
+      .then((serverRoom) => {
+        if (serverRoom && serverRoom.code) {
+          update((state) => {
+            state.rooms[serverRoom.code] = serverRoom;
+          });
+        }
+      })
+      .catch(() => {});
+  }, [room, code]);
+
   if (!room) return <EmptyState title="Room belum ditemukan" />;
   const q = questions.find((q) => q.id === room.questionIds[room.index])!;
   const ready = room.teams.every((t) => t.players.length > 0);
@@ -803,10 +844,25 @@ export function Join() {
   const [error, setError] = useState("");
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const room = s.rooms[code.trim().toUpperCase()];
+    const clean = code.trim().toUpperCase().replace(/[^A-Z0-9]/g, "");
+    let room = findRoom(s.rooms, clean) || getRoom(clean);
+    if (!room && typeof window !== "undefined") {
+      try {
+        const res = await fetch(`/api/rooms/${clean}`);
+        if (res.ok) {
+          const serverRoom = await res.json();
+          if (serverRoom && serverRoom.code) {
+            update((state) => {
+              state.rooms[serverRoom.code] = serverRoom;
+            });
+            room = serverRoom;
+          }
+        }
+      } catch {}
+    }
     if (!room) {
       setError(
-        "Room tidak ditemukan. Periksa kode atau buat room di browser ini.",
+        "Room tidak ditemukan. Periksa kode atau buat room baru di Ruang Guru.",
       );
       return;
     }
@@ -839,13 +895,16 @@ export function Join() {
               required
               value={code}
               maxLength={14}
-              placeholder="CERDAS…"
+              placeholder="Contoh: 4K9A atau CERDAS4K9A"
               onChange={(e) => {
                 setCode(e.target.value.toUpperCase());
                 setError("");
               }}
               autoCapitalize="characters"
             />
+            <small style={{ color: "var(--muted)", fontSize: "12px", marginTop: "4px" }}>
+              Bisa masukkan 4 digit akhiran atau kode lengkap CERDAS.
+            </small>
           </label>
           <label className="field">
             Nama panggilan
@@ -882,10 +941,26 @@ export function Join() {
 }
 export function Player({ code }: { code: string }) {
   const s = useStore();
-  const room = s.rooms[code];
+  const room = findRoom(s.rooms, code) || getRoom(code);
   const now = useClock(room);
   const search = useSearchParams();
   const team = search.get("team") === "1" ? 1 : 0;
+
+  useEffect(() => {
+    if (room || typeof window === "undefined") return;
+    const clean = code.trim().toUpperCase().replace(/[^A-Z0-9]/g, "");
+    fetch(`/api/rooms/${clean}`)
+      .then((r) => (r.ok ? r.json() : null))
+      .then((serverRoom) => {
+        if (serverRoom && serverRoom.code) {
+          update((state) => {
+            state.rooms[serverRoom.code] = serverRoom;
+          });
+        }
+      })
+      .catch(() => {});
+  }, [room, code]);
+
   if (!room) return <EmptyState title="Room belum ditemukan" />;
   if (room.status === "finished")
     return (

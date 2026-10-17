@@ -1,6 +1,8 @@
 "use client";
 import { useSyncExternalStore } from "react";
 import { questions } from "@/data/content";
+import { findRoom } from "./room";
+export { findRoom } from "./room";
 export type Team = { name: string; players: string[]; score: number };
 export type Room = {
   code: string;
@@ -68,20 +70,42 @@ let hydrated = false;
 let channel: BroadcastChannel | undefined;
 const listeners = new Set<() => void>();
 function read(): AppState {
+  if (typeof window === "undefined") return structuredClone(initial);
   try {
     const raw = localStorage.getItem(KEY);
     if (raw) {
       const value = JSON.parse(raw);
-      if (
-        value &&
-        typeof value.xp === "number" &&
-        Array.isArray(value.badges) &&
-        value.rooms
-      )
-        return { ...initial, ...value };
+      if (value && typeof value === "object") {
+        return {
+          ...initial,
+          ...value,
+          rooms:
+            value.rooms && typeof value.rooms === "object"
+              ? value.rooms
+              : {},
+          matches: Array.isArray(value.matches) ? value.matches : [],
+          badges: Array.isArray(value.badges) ? value.badges : [],
+          completed: Array.isArray(value.completed) ? value.completed : [],
+        };
+      }
     }
   } catch {}
   return structuredClone(initial);
+}
+
+export function getRoom(code?: string): Room | undefined {
+  if (!code) return undefined;
+  const fromCache = findRoom(cached.rooms, code);
+  if (fromCache) return fromCache;
+  if (typeof window !== "undefined") {
+    const current = read();
+    const fromStorage = findRoom(current.rooms, code);
+    if (fromStorage) {
+      cached = current;
+      return fromStorage;
+    }
+  }
+  return undefined;
 }
 function emit() {
   listeners.forEach((fn) => fn());
@@ -227,6 +251,7 @@ export function createRoom(
     { length: Math.min(count, pool.length) },
     (_, i) => pool[(i * 7) % pool.length].id,
   );
+  let createdRoom: Room | undefined;
   update((s) => {
     s.rooms[code] = {
       ...config,
@@ -253,7 +278,17 @@ export function createRoom(
       answers: [null, null],
       rounds: [],
     };
+    createdRoom = s.rooms[code];
   });
+  if (typeof window !== "undefined" && createdRoom) {
+    try {
+      fetch("/api/rooms", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(createdRoom),
+      }).catch(() => {});
+    } catch {}
+  }
   return code;
 }
 export type GameAction =
@@ -301,7 +336,7 @@ function reveal(r: Room) {
 export async function gameAction(code: string, action: GameAction) {
   const run = () =>
     update((s) => {
-      const r = s.rooms[code];
+      const r = s.rooms[code] || findRoom(s.rooms, code);
       if (!r) return;
       const now = Date.now();
       if (action.type === "populate" && r.status === "waiting")
@@ -397,4 +432,17 @@ export async function gameAction(code: string, action: GameAction) {
   if (typeof navigator !== "undefined" && navigator.locks)
     await navigator.locks.request(KEY, run);
   else run();
+
+  if (typeof window !== "undefined") {
+    const updated = getRoom(code);
+    if (updated) {
+      try {
+        fetch(`/api/rooms/${updated.code}`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(updated),
+        }).catch(() => {});
+      } catch {}
+    }
+  }
 }
