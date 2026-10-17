@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useSyncExternalStore } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { QRCodeSVG } from "qrcode.react";
@@ -15,7 +15,16 @@ import {
   Users,
 } from "lucide-react";
 import { topics, questions } from "@/data/content";
-import { createRoom, gameAction, Room, Team, useStore } from "@/lib/store";
+import {
+  createRoom,
+  findRoom,
+  gameAction,
+  getRoom,
+  Room,
+  Team,
+  update,
+  useStore,
+} from "@/lib/store";
 import { cn } from "@/lib/utils";
 import { Mascot } from "./art";
 import { EmptyState, Logo } from "./shell";
@@ -167,7 +176,7 @@ export function Setup() {
           <div className="note spacer-top">
             {input === "manual"
               ? "Cocok untuk satu laptop dan layar kelas. Guru mencatat jawaban yang disebutkan peserta."
-              : "Buka tab pemain pada browser dan origin yang sama. Demo ini belum menghubungkan perangkat berbeda."}
+              : "Pemain menjawab langsung dari HP/Tablet masing-masing via scan QR atau kode room."}
           </div>
           <button
             className="button spacer-top"
@@ -182,6 +191,63 @@ export function Setup() {
     </div>
   );
 }
+const emptySubscribe = () => () => {};
+function useMounted() {
+  return useSyncExternalStore(
+    emptySubscribe,
+    () => true,
+    () => false,
+  );
+}
+
+function useRemoteRoomSync(code: string, active = true) {
+  useEffect(() => {
+    if (!active || typeof window === "undefined" || !code) return;
+    const clean = code.trim().toUpperCase().replace(/[^A-Z0-9]/g, "");
+    if (!clean) return;
+
+    let mounted = true;
+    const sync = async () => {
+      try {
+        const res = await fetch(`/api/rooms/${clean}`);
+        if (res.ok && mounted) {
+          const serverRoom = (await res.json()) as Room;
+          if (serverRoom && serverRoom.code) {
+            update((state) => {
+              const local = state.rooms[serverRoom.code];
+              if (
+                !local ||
+                local.status !== serverRoom.status ||
+                local.index !== serverRoom.index ||
+                local.deadline !== serverRoom.deadline ||
+                local.remaining !== serverRoom.remaining ||
+                JSON.stringify(local.answers) !==
+                  JSON.stringify(serverRoom.answers) ||
+                JSON.stringify(local.teams) !==
+                  JSON.stringify(serverRoom.teams) ||
+                (local.rounds?.length || 0) !==
+                  (serverRoom.rounds?.length || 0)
+              ) {
+                state.rooms[serverRoom.code] = {
+                  ...local,
+                  ...serverRoom,
+                };
+              }
+            });
+          }
+        }
+      } catch {}
+    };
+
+    void sync();
+    const timer = setInterval(sync, 500);
+    return () => {
+      mounted = false;
+      clearInterval(timer);
+    };
+  }, [code, active]);
+}
+
 function useClock(room: Room | undefined) {
   const [now, setNow] = useState(0);
   useEffect(() => {
@@ -283,9 +349,17 @@ function TeamScore({
 }
 function LocalNote() {
   return (
-    <p className="local-warning">
-      Mode demo lokal · Sinkronisasi hanya antar-tab di browser dan origin yang
-      sama. QR adalah tautan masuk, bukan koneksi permainan antarperangkat.
+    <p
+      className="local-warning"
+      style={{
+        background: "rgba(4, 120, 87, 0.08)",
+        borderColor: "var(--primary-subtle)",
+        color: "var(--primary-dark)",
+      }}
+    >
+      📡 <strong>Koneksi Ruang Kelas Aktif:</strong> Tersambung otomatis
+      antar-perangkat (Laptop Guru, Smart TV Kelas, dan HP/Tablet Siswa) di
+      jaringan yang sama.
     </p>
   );
 }
@@ -368,14 +442,18 @@ function Result({ room }: { room: Room }) {
   );
 }
 export function TVView({ code, view }: { code: string; view?: string }) {
+  const mounted = useMounted();
   const s = useStore();
-  const room = s.rooms[code];
+  const room = mounted ? findRoom(s.rooms, code) || getRoom(code) : undefined;
   const now = useClock(room);
   const origin = useOrigin();
   const router = useRouter();
   const [copied, setCopied] = useState(false);
+
+  useRemoteRoomSync(code, mounted);
+
   useEffect(() => {
-    if (!room) return;
+    if (!mounted || !room) return;
     const expected =
       room.status === "finished"
         ? "hasil"
@@ -383,13 +461,32 @@ export function TVView({ code, view }: { code: string; view?: string }) {
           ? ""
           : "arena";
     if ((view || "") !== expected)
-      router.replace(`/tv/${code}${expected ? `/${expected}` : ""}`);
-  }, [room, code, view, router]);
+      router.replace(`/tv/${room.code}${expected ? `/${expected}` : ""}`);
+  }, [mounted, room, code, view, router]);
+
+  if (!mounted) {
+    return (
+      <div className="arena" data-testid="tv-lobby">
+        <div className="arena-header">
+          <Logo />
+          <div className="arena-status">
+            <span>Menghubungkan ke arena…</span>
+          </div>
+        </div>
+        <div className="lobby-content">
+          <Mascot emotion="thinking" animated />
+          <h1>Menghubungkan ke Smart TV…</h1>
+          <p className="spacer-top">Menyiapkan arena permainan kelas.</p>
+        </div>
+      </div>
+    );
+  }
+
   if (!room)
     return (
       <EmptyState
         title="Room belum ditemukan"
-        text="Buat room di ruang guru pada browser yang sama, lalu buka tautan TV-nya."
+        text="Periksa kode room atau pastikan room dibuat melalui Ruang Guru."
       />
     );
   const q = questions.find((q) => q.id === room.questionIds[room.index])!;
@@ -466,9 +563,9 @@ export function TVView({ code, view }: { code: string; view?: string }) {
                 marginSize={1}
               />
               <p>
-                Buka halaman gabung
+                Scan QR dengan HP/Tablet siswa
                 <br />
-                pada tab browser yang sama.
+                untuk langsung bergabung ke arena!
               </p>
             </div>
             <TeamScore team={room.teams[1]} index={1} showScore={false} />
@@ -564,9 +661,28 @@ export function TVView({ code, view }: { code: string; view?: string }) {
   );
 }
 export function Controller({ code }: { code: string }) {
+  const mounted = useMounted();
   const s = useStore();
-  const room = s.rooms[code];
+  const room = mounted ? findRoom(s.rooms, code) || getRoom(code) : undefined;
   const now = useClock(room);
+
+  useRemoteRoomSync(code, mounted);
+
+  if (!mounted) {
+    return (
+      <div className="page-container content-page">
+        <PageHeading
+          title="Kontrol pertandingan"
+          subtitle="Menghubungkan ke ruang kelas…"
+        />
+        <div className="paper">
+          <Mascot emotion="thinking" animated />
+          <p className="spacer-top">Memuat data kontrol guru…</p>
+        </div>
+      </div>
+    );
+  }
+
   if (!room) return <EmptyState title="Room belum ditemukan" />;
   const q = questions.find((q) => q.id === room.questionIds[room.index])!;
   const ready = room.teams.every((t) => t.players.length > 0);
@@ -798,15 +914,32 @@ export function Join() {
   const search = useSearchParams();
   const s = useStore();
   const [code, setCode] = useState(search.get("code") || "");
-  const [name, setName] = useState(s.name);
+  const [customName, setCustomName] = useState<string | null>(null);
   const [team, setTeam] = useState(0);
   const [error, setError] = useState("");
+  const name = customName ?? s.name;
+
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const room = s.rooms[code.trim().toUpperCase()];
+    const clean = code.trim().toUpperCase().replace(/[^A-Z0-9]/g, "");
+    let room = findRoom(s.rooms, clean) || getRoom(clean);
+    if (!room && typeof window !== "undefined") {
+      try {
+        const res = await fetch(`/api/rooms/${clean}`);
+        if (res.ok) {
+          const serverRoom = await res.json();
+          if (serverRoom && serverRoom.code) {
+            update((state) => {
+              state.rooms[serverRoom.code] = serverRoom;
+            });
+            room = serverRoom;
+          }
+        }
+      } catch {}
+    }
     if (!room) {
       setError(
-        "Room tidak ditemukan. Periksa kode atau buat room di browser ini.",
+        "Room tidak ditemukan. Periksa kode atau buat room baru di Ruang Guru.",
       );
       return;
     }
@@ -839,13 +972,16 @@ export function Join() {
               required
               value={code}
               maxLength={14}
-              placeholder="CERDAS…"
+              placeholder="Contoh: 4K9A atau CERDAS4K9A"
               onChange={(e) => {
                 setCode(e.target.value.toUpperCase());
                 setError("");
               }}
               autoCapitalize="characters"
             />
+            <small style={{ color: "var(--muted)", fontSize: "12px", marginTop: "4px" }}>
+              Bisa masukkan 4 digit akhiran atau kode lengkap CERDAS.
+            </small>
           </label>
           <label className="field">
             Nama panggilan
@@ -853,7 +989,7 @@ export function Join() {
               required
               maxLength={20}
               value={name}
-              onChange={(e) => setName(e.target.value)}
+              onChange={(e) => setCustomName(e.target.value)}
             />
           </label>
           <label className="field">
@@ -881,11 +1017,28 @@ export function Join() {
   );
 }
 export function Player({ code }: { code: string }) {
+  const mounted = useMounted();
   const s = useStore();
-  const room = s.rooms[code];
+  const room = mounted ? findRoom(s.rooms, code) || getRoom(code) : undefined;
   const now = useClock(room);
   const search = useSearchParams();
   const team = search.get("team") === "1" ? 1 : 0;
+
+  useRemoteRoomSync(code, mounted);
+
+  if (!mounted) {
+    return (
+      <div className="player-screen" data-testid="player-screen">
+        <Logo />
+        <div className="paper">
+          <Mascot emotion="thinking" animated />
+          <h1>Menghubungkan ke Room…</h1>
+          <p className="spacer-top">Menyiapkan layar petualang.</p>
+        </div>
+      </div>
+    );
+  }
+
   if (!room) return <EmptyState title="Room belum ditemukan" />;
   if (room.status === "finished")
     return (

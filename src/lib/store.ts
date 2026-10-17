@@ -1,6 +1,8 @@
 "use client";
 import { useSyncExternalStore } from "react";
 import { questions } from "@/data/content";
+import { findRoom } from "./room";
+export { findRoom } from "./room";
 export type Team = { name: string; players: string[]; score: number };
 export type Room = {
   code: string;
@@ -46,44 +48,60 @@ export type AppState = {
   }[];
 };
 export const initial: AppState = {
-  name: "Ahmad",
+  name: "",
   avatar: 0,
-  xp: 2350,
-  stars: 24,
-  completed: ["kenal-uang"],
-  rewards: ["lesson-kenal-uang"],
-  badges: [0, 1, 2, 3, 5],
-  savings: 14000,
+  xp: 0,
+  stars: 0,
+  completed: [],
+  rewards: [],
+  badges: [],
+  savings: 0,
   target: 100000,
-  goal: "Buku cerita impianku",
-  deposits: Array.from({ length: 7 }, (_, i) => ({
-    amount: 2000,
-    date: `2026-10-${String(i + 1).padStart(2, "0")}T08:00:00+07:00`,
-  })),
+  goal: "Buku Cerita Impian",
+  deposits: [],
   savingsMilestones: [],
   rooms: {},
   matches: [],
 };
-const KEY = "duel-cerdas-v1";
+const KEY = "khalifa-app-v2";
 let cached: AppState = initial;
 let loaded = false;
+let hydrated = false;
 let channel: BroadcastChannel | undefined;
 const listeners = new Set<() => void>();
 function read(): AppState {
+  if (typeof window === "undefined") return structuredClone(initial);
   try {
     const raw = localStorage.getItem(KEY);
     if (raw) {
       const value = JSON.parse(raw);
-      if (
-        value &&
-        typeof value.xp === "number" &&
-        Array.isArray(value.badges) &&
-        value.rooms
-      )
-        return { ...initial, ...value };
+      if (value && typeof value === "object") {
+        return {
+          ...initial,
+          ...value,
+          rooms:
+            value.rooms && typeof value.rooms === "object"
+              ? value.rooms
+              : {},
+          matches: Array.isArray(value.matches) ? value.matches : [],
+          badges: Array.isArray(value.badges) ? value.badges : [],
+          completed: Array.isArray(value.completed) ? value.completed : [],
+        };
+      }
     }
   } catch {}
   return structuredClone(initial);
+}
+
+export function getRoom(code?: string): Room | undefined {
+  if (!code) return undefined;
+  const fromCache = findRoom(cached.rooms, code);
+  if (fromCache) return fromCache;
+  if (typeof window !== "undefined") {
+    const current = read();
+    return findRoom(current.rooms, code);
+  }
+  return undefined;
 }
 function emit() {
   listeners.forEach((fn) => fn());
@@ -91,7 +109,6 @@ function emit() {
 function setup() {
   if (loaded || typeof window === "undefined") return;
   loaded = true;
-  cached = read();
   window.addEventListener("storage", (e) => {
     if (e.key === KEY) {
       cached = read();
@@ -109,6 +126,13 @@ function setup() {
 function subscribe(fn: () => void) {
   setup();
   listeners.add(fn);
+  if (!hydrated && typeof window !== "undefined") {
+    hydrated = true;
+    queueMicrotask(() => {
+      cached = read();
+      emit();
+    });
+  }
   return () => {
     listeners.delete(fn);
   };
@@ -122,6 +146,7 @@ export function useStore() {
 }
 export function update(fn: (s: AppState) => void) {
   setup();
+  hydrated = true;
   const next = read();
   const before = { xp: next.xp, stars: next.stars, badges: [...next.badges] };
   fn(next);
@@ -222,6 +247,7 @@ export function createRoom(
     { length: Math.min(count, pool.length) },
     (_, i) => pool[(i * 7) % pool.length].id,
   );
+  let createdRoom: Room | undefined;
   update((s) => {
     s.rooms[code] = {
       ...config,
@@ -248,7 +274,17 @@ export function createRoom(
       answers: [null, null],
       rounds: [],
     };
+    createdRoom = s.rooms[code];
   });
+  if (typeof window !== "undefined" && createdRoom) {
+    try {
+      fetch("/api/rooms", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(createdRoom),
+      }).catch(() => {});
+    } catch {}
+  }
   return code;
 }
 export type GameAction =
@@ -296,7 +332,7 @@ function reveal(r: Room) {
 export async function gameAction(code: string, action: GameAction) {
   const run = () =>
     update((s) => {
-      const r = s.rooms[code];
+      const r = s.rooms[code] || findRoom(s.rooms, code);
       if (!r) return;
       const now = Date.now();
       if (action.type === "populate" && r.status === "waiting")
@@ -304,9 +340,9 @@ export async function gameAction(code: string, action: GameAction) {
           t.players =
             r.mode === "team"
               ? i === 0
-                ? ["Ahmad", "Siti"]
-                : ["Budi", "Aisyah"]
-              : [i === 0 ? "Ahmad" : "Budi"];
+                ? ["Regu Hijau 1", "Regu Hijau 2"]
+                : ["Regu Oranye 1", "Regu Oranye 2"]
+              : [i === 0 ? "Pemain Hijau" : "Pemain Oranye"];
           if (r.mode === "individual") t.name = t.players[0];
         });
       if (
@@ -392,4 +428,17 @@ export async function gameAction(code: string, action: GameAction) {
   if (typeof navigator !== "undefined" && navigator.locks)
     await navigator.locks.request(KEY, run);
   else run();
+
+  if (typeof window !== "undefined") {
+    const updated = getRoom(code);
+    if (updated) {
+      try {
+        fetch(`/api/rooms/${updated.code}`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(updated),
+        }).catch(() => {});
+      } catch {}
+    }
+  }
 }

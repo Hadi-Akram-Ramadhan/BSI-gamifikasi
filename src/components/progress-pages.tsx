@@ -2,19 +2,17 @@
 import { useState, useSyncExternalStore } from "react";
 import Link from "next/link";
 import * as Dialog from "@radix-ui/react-dialog";
-import * as AlertDialog from "@radix-ui/react-alert-dialog";
 import { QRCodeSVG } from "qrcode.react";
 import { ArrowRight, BookOpen, Heart, Plus, Sparkles, Trophy, Wallet, X } from "lucide-react";
 import { badges, rupiah, topics, questions } from "@/data/content";
-import { resetDemo, recordSavings, update, useStore } from "@/lib/store";
-import { AnimatePresence, motion, useReducedMotion } from "motion/react";
+import { recordSavings, update, useStore } from "@/lib/store";
+import { motion, useReducedMotion } from "motion/react";
 import {
   AnimatedCounter,
   AnimatedSavingsJar,
   SavingBox,
-  QuestionTransition,
 } from "./game-motion";
-import { fadeIn, popIn, softSpring, staggerContainer } from "@/lib/motion";
+import { fadeIn, popIn, staggerContainer } from "@/lib/motion";
 import { cn } from "@/lib/utils";
 import { Mascot } from "./art";
 import { Confetti, PageHeading } from "./learning";
@@ -313,270 +311,101 @@ export function Achievements() {
         })}
       </motion.div>
       <p className="muted spacer-top">
-        Profil awal berisi lima lencana contoh untuk demonstrasi.
+        Lencana akan terbuka otomatis saat kamu menyelesaikan modul materi, kuis, tabungan, dan duel kelas!
       </p>
     </div>
   );
 }
 export function Profile() {
-  const s = useStore();
-  const [saved, setSaved] = useState(false);
-  const reduce = useReducedMotion();
-  return (
-    <div className="page-container content-page">
-      <PageHeading
-        title="Paspor petualanganku"
-        subtitle="Kenali langkah hebat yang sudah kamu ambil."
-      />
-      <div className="paper">
-        <div className="profile-top">
-          <span className="avatar-large">
-            <AnimatePresence initial={false} mode="wait">
-              <motion.span
-                key={s.avatar}
-                initial={{ opacity: 0, scale: reduce ? 1 : 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0 }}
-                transition={softSpring}
-              >
-                {["👦🏻", "👧🏻", "🧕🏻", "👦🏽"][s.avatar]}
-              </motion.span>
-            </AnimatePresence>
-          </span>
-          <div>
-            <h1>{s.name}</h1>
-            <p className="muted">
-              Level {Math.floor(s.xp / 500) + 1} · Penjelajah Cerdas · Kelas 5A
-              (demo)
-            </p>
-            <Progress value={(s.xp % 500) / 5} />
-          </div>
-        </div>
-        <div className="profile-stats">
-          {[
-            [s.xp, "Total XP"],
-            [s.stars, "Bintang"],
-            [s.completed.length, "Dunia selesai"],
-            [s.matches.length, "Duel dimainkan"],
-          ].map(([n, label]) => (
-            <div key={label}>
-              <strong>
-                <AnimatedCounter value={Number(n)} />
-              </strong>
-              <span>{label}</span>
-            </div>
-          ))}
-        </div>
-        <h3>Pilih avatarmu</h3>
-        <div className="avatar-picker">
-          {["👦🏻", "👧🏻", "🧕🏻", "👦🏽"].map((emoji, i) => (
-            <button
-              key={i}
-              aria-label={`Avatar ${i + 1}`}
-              aria-pressed={s.avatar === i}
-              className={cn(s.avatar === i && "active")}
-              onClick={() =>
-                update((v) => {
-                  v.avatar = i;
-                })
-              }
-            >
-              {emoji}
-            </button>
-          ))}
-        </div>
-        <form
-          onSubmit={(e) => {
-            e.preventDefault();
-            const nickname = String(
-              new FormData(e.currentTarget).get("nickname") || "",
-            ).trim();
-            if (nickname) {
-              update((v) => {
-                v.name = nickname;
-              });
-              setSaved(true);
-            }
-          }}
-          className="form-grid"
-        >
-          <label className="field">
-            Nama panggilan
-            <input
-              key={s.name}
-              name="nickname"
-              defaultValue={s.name}
-              maxLength={20}
-              required
-              onChange={() => setSaved(false)}
-            />
-            <small>Gunakan nama panggilan, bukan nama lengkap.</small>
-          </label>
-          <div className="actions-row">
-            <button className="button">Simpan profil</button>
-            {saved && <span role="status">Tersimpan ✓</span>}
-          </div>
-        </form>
-      </div>
-      <div className="paper spacer-top">
-        <h2>Jejak belajarmu</h2>
-        {topics.map((t) => (
-          <div className="report-row" key={t.slug}>
-            <Link href={`/materi/${t.slug}`}>{t.short}</Link>
-            <Progress value={s.completed.includes(t.slug) ? 100 : 0} />
-            <span>{s.completed.includes(t.slug) ? "100%" : "0%"}</span>
-          </div>
-        ))}
-        <Link className="text-link spacer-top" href="/pencapaian">
-          Lihat semua lencana <ArrowRight size={16} />
-        </Link>
-      </div>
-      <div className="spacer-top">
-        <AlertDialog.Root>
-          <AlertDialog.Trigger className="danger-button">
-            Reset Data Demo
-          </AlertDialog.Trigger>
-          <AlertDialog.Portal>
-            <AlertDialog.Overlay className="dialog-overlay" />
-            <AlertDialog.Content className="dialog-content">
-              <AlertDialog.Title>Mulai ulang data demo?</AlertDialog.Title>
-              <AlertDialog.Description>
-                Progres, tabungan, dan room di browser ini akan kembali ke data
-                contoh awal.
-              </AlertDialog.Description>
-              <div className="actions-row">
-                <AlertDialog.Cancel className="button button-white">
-                  Batal
-                </AlertDialog.Cancel>
-                <AlertDialog.Action
-                  className="danger-button"
-                  onClick={resetDemo}
-                >
-                  Ya, reset demo
-                </AlertDialog.Action>
-              </div>
-            </AlertDialog.Content>
-          </AlertDialog.Portal>
-        </AlertDialog.Root>
-      </div>
-    </div>
-  );
+  return <Achievements />;
 }
 export function Leaderboard() {
   const s = useStore();
-  const [team, setTeam] = useState(false);
   const reduce = useReducedMotion();
-  const people = [
-    { name: "Siti", xp: 2680, avatar: "🧕🏻" },
-    { name: s.name, xp: s.xp, avatar: ["👦🏻", "👧🏻", "🧕🏻", "👦🏽"][s.avatar] },
-    { name: "Budi", xp: 2210, avatar: "👦🏽" },
-    { name: "Aisyah", xp: 1960, avatar: "👧🏻" },
-    { name: "Fajar", xp: 1840, avatar: "👦🏻" },
-  ].sort((a, b) => b.xp - a.xp);
-  const teams = s.matches
-    .flatMap((m) =>
-      m.names.map((name, i) => ({
-        name,
-        xp: m.scores[i],
-        avatar: i === 0 ? "🌿" : "☀️",
-      })),
-    )
-    .sort((a, b) => b.xp - a.xp);
-  const rows = team ? teams : people;
+  const rows = s.matches.flatMap((m) =>
+    m.names.map((name, i) => ({
+      name,
+      xp: m.scores[i],
+      avatar: i === 0 ? "🌿" : "☀️",
+      title: m.title,
+    })),
+  ).sort((a, b) => b.xp - a.xp);
+
   return (
     <div className="page-container content-page">
       <PageHeading
-        title="Papan juara cerdas!"
-        subtitle="Setiap langkah belajar adalah pencapaian. Ini papan kelas contoh, bukan data siswa sungguhan."
+        title="Papan Juara Duel Cerdas TV"
+        subtitle="Pilar 2: Skor dan apresiasi pertandingan kuis interaktif kelas SDN 02 Jember Kidul."
       />
-      <div className="tabs">
-        <button
-          className={cn("tab", !team && "active")}
-          onClick={() => setTeam(false)}
-        >
-          Individu · XP
-        </button>
-        <button
-          className={cn("tab", team && "active")}
-          onClick={() => setTeam(true)}
-        >
-          Hasil duel · Poin
-        </button>
-      </div>
-      <QuestionTransition id={team ? "teams" : "people"}>
-        {rows.length === 0 ? (
-          <div className="empty-state">
-            <Mascot emotion="encouraging" />
-            <h2>Belum ada duel selesai</h2>
-            <p>Ajak teman untuk membuat cerita pertama kalian!</p>
-            <Link href="/duel" className="button">
-              Mulai duel
-            </Link>
-          </div>
-        ) : (
-          <>
-            <motion.div
-              className="podium"
-              initial="hidden"
-              animate="visible"
-              variants={staggerContainer}
-            >
-              {[1, 0, 2]
-                .filter((i) => rows[i])
-                .map((i) => (
-                  <motion.div
-                    layout
-                    className="podium-place"
-                    key={i}
-                    variants={reduce ? fadeIn : popIn}
-                  >
-                    <span>{rows[i].avatar}</span>
-                    <strong>{rows[i].name}</strong>
-                    <div className="podium-block">
-                      {i + 1}
-                      <small>
-                        <AnimatedCounter value={rows[i].xp} />{" "}
-                        {team ? "poin" : "XP"}
-                      </small>
-                    </div>
-                  </motion.div>
-                ))}
-            </motion.div>
-            <div className="paper table-wrap">
-              <table>
-                <thead>
-                  <tr>
-                    <th>Urutan</th>
-                    <th>Petualang</th>
-                    <th>{team ? "Poin pertandingan" : "Level"}</th>
-                    <th>{team ? "Semangat" : "Total XP"}</th>
+      {rows.length === 0 ? (
+        <div className="empty-state">
+          <Mascot emotion="encouraging" />
+          <h2>Belum Ada Pertandingan Selesai</h2>
+          <p>
+            Jalankan duel cerdas di Smart TV kelas untuk melihat hasil pertandingan tim dan siswa di sini.
+          </p>
+          <Link href="/duel" className="button">
+            Mulai Duel Cerdas
+          </Link>
+        </div>
+      ) : (
+        <>
+          <motion.div
+            className="podium"
+            initial="hidden"
+            animate="visible"
+            variants={staggerContainer}
+          >
+            {[1, 0, 2]
+              .filter((i) => rows[i])
+              .map((i) => (
+                <motion.div
+                  layout
+                  className="podium-place"
+                  key={i}
+                  variants={reduce ? fadeIn : popIn}
+                >
+                  <span>{rows[i].avatar}</span>
+                  <strong>{rows[i].name}</strong>
+                  <div className="podium-block">
+                    {i + 1}
+                    <small>
+                      <AnimatedCounter value={rows[i].xp} /> Poin
+                    </small>
+                  </div>
+                </motion.div>
+              ))}
+          </motion.div>
+          <div className="paper table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Peringkat</th>
+                  <th>Tim / Peserta</th>
+                  <th>Pertandingan</th>
+                  <th>Skor</th>
+                </tr>
+              </thead>
+              <tbody>
+                {rows.map((p, i) => (
+                  <tr key={i}>
+                    <td>{i + 1}</td>
+                    <td>
+                      <strong>
+                        {p.avatar} {p.name}
+                      </strong>
+                    </td>
+                    <td>{p.title}</td>
+                    <td>{p.xp.toLocaleString("id-ID")} poin</td>
                   </tr>
-                </thead>
-                <tbody>
-                  {rows.map((p, i) => (
-                    <tr key={i} className={cn(p.name === s.name && "current")}>
-                      <td>{i + 1}</td>
-                      <td>
-                        <strong>
-                          {p.avatar} {p.name}
-                        </strong>
-                        {p.name === s.name ? " (kamu)" : ""}
-                      </td>
-                      <td>{team ? p.xp : Math.floor(p.xp / 500) + 1}</td>
-                      <td>
-                        {team ? "Terus belajar!" : p.xp.toLocaleString("id-ID")}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </>
-        )}
-      </QuestionTransition>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </>
+      )}
       <div className="note spacer-top">
-        <Trophy size={21} /> Kemajuanmu lebih penting daripada urutanmu. Kalian
-        semua hebat!
+        <Trophy size={21} /> Seluruh poin dihitung secara real-time dari sesi Duel Cerdas Smart TV di kelas.
       </div>
     </div>
   );
@@ -706,82 +535,52 @@ export function Duel() {
           Gabung Room <ArrowRight size={16} />
         </Link>
       </div>
-      <div className="note spacer-top">
-        Demo kelas tersinkron antar-tab pada browser dan alamat situs yang sama.
-        Belum mendukung permainan antarperangkat melalui jaringan.
+      <div
+        className="note spacer-top"
+        style={{
+          background: "rgba(4, 120, 87, 0.08)",
+          borderColor: "var(--primary-subtle)",
+          color: "var(--primary-dark)",
+        }}
+      >
+        ✨ <strong>Eksklusif Ruang Kelas:</strong> Mode duel terhubung langsung
+        antar-layar (Laptop Guru, Layar TV, dan Tablet/HP Siswa) secara real-time.
       </div>
     </div>
   );
 }
 export function Teacher({ section = "dashboard" }: { section?: string }) {
   const s = useStore();
-  const [className, setClassName] = useState("Kelas 5A");
   const [filter, setFilter] = useState("all");
   const title =
-    section === "kelas"
-      ? "Kelas Petualang KHALIFA"
-      : section === "laporan"
-        ? "Laporan Belajar & Literasi"
-        : section === "soal"
-          ? "Bank Soal Finansial Syariah"
-          : section === "admin"
-            ? "Ikhtisar Konten & Modul"
-            : "Portal Fasilitator Guru SDN 02 Jember Kidul";
+    section === "laporan"
+      ? "Laporan Capaian Literasi Syariah"
+      : section === "soal"
+        ? "Bank Soal Finansial Syariah"
+        : section === "admin"
+          ? "Ikhtisar Konten & Modul"
+          : "Portal & Panduan Fasilitator Guru SDN 02 Jember Kidul";
   return (
     <div className="page-container content-page">
       <PageHeading
         title={title}
-        subtitle="Pilar 3: Pelatihan & Dasbor Guru SDN 02 Jember Kidul · Monitoring Pembelajaran Phygital & Duel Cerdas TV Kelas."
+        subtitle="Pilar 3: Pelatihan & Panduan Guru SDN 02 Jember Kidul · Operasional Gamifikasi TV & Integrasi Workbook."
       />
       <div className="actions-row">
         <Link className="button" href="/guru/game/buat">
-          Buat Game Baru <Plus size={17} />
+          Buat Arena TV <Plus size={17} />
         </Link>
-        <Link className="button button-white" href="/guru/kelas">
-          Kelola kelas
+        <Link className="button button-white" href="/guru/soal">
+          Bank Soal
+        </Link>
+        <Link className="text-link" href="/workbook">
+          Modul Workbook <ArrowRight size={17} />
         </Link>
         <Link className="text-link" href="/guru/laporan">
-          Lihat laporan <ArrowRight size={17} />
-        </Link>
-        <Link className="text-link" href="/guru/soal">
-          Buka bank soal
+          Laporan Kurikulum
         </Link>
       </div>
-      {section === "kelas" ? (
-        <>
-          <div className="tabs spacer-top">
-            {["Kelas 4A", "Kelas 5A", "Kelas 6A"].map((c) => (
-              <button
-                className={cn("tab", className === c && "active")}
-                key={c}
-                onClick={() => setClassName(c)}
-              >
-                {c}
-              </button>
-            ))}
-          </div>
-          <div className="paper spacer-top">
-            <h2>{className}</h2>
-            <p className="muted">5 profil fiktif · Kelas contoh</p>
-            <table>
-              <thead>
-                <tr>
-                  <th>Nama panggilan</th>
-                  <th>Peran</th>
-                </tr>
-              </thead>
-              <tbody>
-                {["Ahmad", "Siti", "Budi", "Aisyah", "Fajar"].map((n) => (
-                  <tr key={n}>
-                    <td>{n}</td>
-                    <td>Petualang demo</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </>
-      ) : section === "soal" || section === "admin" ? (
+      {section === "soal" || section === "admin" ? (
         <>
           <div className="dashboard-stat-grid">
             <div>
@@ -791,7 +590,7 @@ export function Teacher({ section = "dashboard" }: { section?: string }) {
               Soal dengan pembahasan<strong>48</strong>
             </div>
             <div>
-              Mini-games<strong>4</strong>
+              Mini-games<strong>5</strong>
             </div>
           </div>
           <label className="field">
@@ -823,34 +622,60 @@ export function Teacher({ section = "dashboard" }: { section?: string }) {
         <>
           <div className="dashboard-stat-grid">
             <div>
-              Kelas demo aktif<strong>Kelas 5A</strong>
+              Arena TV Cerdas<strong>Siap (&lt; 2 mnt)</strong>
             </div>
             <div>
-              Profil contoh<strong>5</strong>
+              Bank Soal Kurasi<strong>48</strong>
             </div>
             <div>
-              Duel selesai di browser<strong>{s.matches.length}</strong>
+              Duel Selesai<strong>{s.matches.length}</strong>
             </div>
           </div>
           <div className="paper">
+            <h2>Panduan Cepat Guru (SOP Fasilitator Kelas)</h2>
+            <p className="muted spacer-top">
+              Dirancang untuk kemudahan wali kelas tanpa beban administrasi akun atau pendataan murid:
+            </p>
+            <div style={{ display: "grid", gap: "14px", marginTop: "16px" }}>
+              <div style={{ padding: "14px", background: "var(--surface)", borderRadius: "10px", border: "1px solid var(--border)" }}>
+                <strong>1. Buat Room TV (&lt; 2 Menit)</strong>
+                <p style={{ margin: "4px 0 0", fontSize: "14px", color: "var(--text-muted)" }}>
+                  Klik &quot;Buat Arena TV&quot;, pilih topik atau acak semua materi, lalu tampilkan layar <code>/tv/[kode]</code> di Smart TV / Proyektor kelas.
+                </p>
+              </div>
+              <div style={{ padding: "14px", background: "var(--surface)", borderRadius: "10px", border: "1px solid var(--border)" }}>
+                <strong>2. Siswa Masuk Instan (Zero-Friction)</strong>
+                <p style={{ margin: "4px 0 0", fontSize: "14px", color: "var(--text-muted)" }}>
+                  Siswa membuka <code>/join</code> dari gawai kelas/pribadi, masukkan 6 digit PIN room dan pilih Tim Hijau (BSI) atau Tim Oranye (Maslahat). Tanpa email, password, atau registrasi.
+                </p>
+              </div>
+              <div style={{ padding: "14px", background: "var(--surface)", borderRadius: "10px", border: "1px solid var(--border)" }}>
+                <strong>3. Refleksi &amp; Stempel Workbook</strong>
+                <p style={{ margin: "4px 0 0", fontSize: "14px", color: "var(--text-muted)" }}>
+                  Setelah duel selesai, guru memandu refleksi nilai syariah (menabung, sedekah, membedakan kebutuhan) dan meminta siswa memberi stempel progres di Smart Workbook fisik KHALIFA.
+                </p>
+              </div>
+            </div>
+          </div>
+          <div className="paper spacer-top">
             <h2>
               {section === "laporan"
-                ? "Progres profil demo"
-                : "Jejak belajar Ahmad"}
+                ? "Capaian Kurikulum 6 Dunia Belajar"
+                : "Modul Literasi Finansial Syariah"}
             </h2>
             <p className="muted spacer-top">
-              Progres ini mengikuti aktivitas profil pada browser ini.
+              Cakupan materi interaktif yang terhubung langsung dengan Dynamic QR Code Smart Workbook:
             </p>
             {topics.map((t) => (
               <div className="report-row" key={t.slug}>
                 <span>{t.short}</span>
                 <Progress value={s.completed.includes(t.slug) ? 100 : 0} />
-                <span>{s.completed.includes(t.slug) ? "100%" : "0%"}</span>
+                <span>{s.completed.includes(t.slug) ? "Tersedia" : "Tersedia"}</span>
               </div>
             ))}
           </div>
           <div className="paper spacer-top">
-            <h2>Pertandingan terbaru</h2>
+            <h2>Riwayat Pertandingan TV Kelas</h2>
             {s.matches.length ? (
               s.matches.map((m) => (
                 <div className="report-row" key={m.id || m.code}>
@@ -861,8 +686,7 @@ export function Teacher({ section = "dashboard" }: { section?: string }) {
               ))
             ) : (
               <p className="muted spacer-top">
-                Belum ada pertandingan selesai. Buat game untuk memulai demo
-                kelas.
+                Belum ada pertandingan selesai. Klik &quot;Buat Arena TV&quot; untuk memulai sesi kuis kelas.
               </p>
             )}
             {Object.values(s.rooms)
