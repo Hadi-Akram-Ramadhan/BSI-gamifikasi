@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useSyncExternalStore } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { QRCodeSVG } from "qrcode.react";
@@ -191,6 +191,15 @@ export function Setup() {
     </div>
   );
 }
+const emptySubscribe = () => () => {};
+function useMounted() {
+  return useSyncExternalStore(
+    emptySubscribe,
+    () => true,
+    () => false,
+  );
+}
+
 function useRemoteRoomSync(code: string, active = true) {
   useEffect(() => {
     if (!active || typeof window === "undefined" || !code) return;
@@ -433,17 +442,18 @@ function Result({ room }: { room: Room }) {
   );
 }
 export function TVView({ code, view }: { code: string; view?: string }) {
+  const mounted = useMounted();
   const s = useStore();
-  const room = findRoom(s.rooms, code) || getRoom(code);
+  const room = mounted ? findRoom(s.rooms, code) || getRoom(code) : undefined;
   const now = useClock(room);
   const origin = useOrigin();
   const router = useRouter();
   const [copied, setCopied] = useState(false);
 
-  useRemoteRoomSync(code);
+  useRemoteRoomSync(code, mounted);
 
   useEffect(() => {
-    if (!room) return;
+    if (!mounted || !room) return;
     const expected =
       room.status === "finished"
         ? "hasil"
@@ -452,7 +462,26 @@ export function TVView({ code, view }: { code: string; view?: string }) {
           : "arena";
     if ((view || "") !== expected)
       router.replace(`/tv/${room.code}${expected ? `/${expected}` : ""}`);
-  }, [room, code, view, router]);
+  }, [mounted, room, code, view, router]);
+
+  if (!mounted) {
+    return (
+      <div className="arena" data-testid="tv-lobby">
+        <div className="arena-header">
+          <Logo />
+          <div className="arena-status">
+            <span>Menghubungkan ke arena…</span>
+          </div>
+        </div>
+        <div className="lobby-content">
+          <Mascot emotion="thinking" animated />
+          <h1>Menghubungkan ke Smart TV…</h1>
+          <p className="spacer-top">Menyiapkan arena permainan kelas.</p>
+        </div>
+      </div>
+    );
+  }
+
   if (!room)
     return (
       <EmptyState
@@ -632,11 +661,27 @@ export function TVView({ code, view }: { code: string; view?: string }) {
   );
 }
 export function Controller({ code }: { code: string }) {
+  const mounted = useMounted();
   const s = useStore();
-  const room = findRoom(s.rooms, code) || getRoom(code);
+  const room = mounted ? findRoom(s.rooms, code) || getRoom(code) : undefined;
   const now = useClock(room);
 
-  useRemoteRoomSync(code);
+  useRemoteRoomSync(code, mounted);
+
+  if (!mounted) {
+    return (
+      <div className="page-container content-page">
+        <PageHeading
+          title="Kontrol pertandingan"
+          subtitle="Menghubungkan ke ruang kelas…"
+        />
+        <div className="paper">
+          <Mascot emotion="thinking" animated />
+          <p className="spacer-top">Memuat data kontrol guru…</p>
+        </div>
+      </div>
+    );
+  }
 
   if (!room) return <EmptyState title="Room belum ditemukan" />;
   const q = questions.find((q) => q.id === room.questionIds[room.index])!;
@@ -869,9 +914,11 @@ export function Join() {
   const search = useSearchParams();
   const s = useStore();
   const [code, setCode] = useState(search.get("code") || "");
-  const [name, setName] = useState(s.name);
+  const [customName, setCustomName] = useState<string | null>(null);
   const [team, setTeam] = useState(0);
   const [error, setError] = useState("");
+  const name = customName ?? s.name;
+
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     const clean = code.trim().toUpperCase().replace(/[^A-Z0-9]/g, "");
@@ -942,7 +989,7 @@ export function Join() {
               required
               maxLength={20}
               value={name}
-              onChange={(e) => setName(e.target.value)}
+              onChange={(e) => setCustomName(e.target.value)}
             />
           </label>
           <label className="field">
@@ -970,13 +1017,27 @@ export function Join() {
   );
 }
 export function Player({ code }: { code: string }) {
+  const mounted = useMounted();
   const s = useStore();
-  const room = findRoom(s.rooms, code) || getRoom(code);
+  const room = mounted ? findRoom(s.rooms, code) || getRoom(code) : undefined;
   const now = useClock(room);
   const search = useSearchParams();
   const team = search.get("team") === "1" ? 1 : 0;
 
-  useRemoteRoomSync(code);
+  useRemoteRoomSync(code, mounted);
+
+  if (!mounted) {
+    return (
+      <div className="player-screen" data-testid="player-screen">
+        <Logo />
+        <div className="paper">
+          <Mascot emotion="thinking" animated />
+          <h1>Menghubungkan ke Room…</h1>
+          <p className="spacer-top">Menyiapkan layar petualang.</p>
+        </div>
+      </div>
+    );
+  }
 
   if (!room) return <EmptyState title="Room belum ditemukan" />;
   if (room.status === "finished")

@@ -99,11 +99,7 @@ export function getRoom(code?: string): Room | undefined {
   if (fromCache) return fromCache;
   if (typeof window !== "undefined") {
     const current = read();
-    const fromStorage = findRoom(current.rooms, code);
-    if (fromStorage) {
-      cached = current;
-      return fromStorage;
-    }
+    return findRoom(current.rooms, code);
   }
   return undefined;
 }
