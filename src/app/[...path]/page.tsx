@@ -24,37 +24,41 @@ import {
   Join,
   Player,
 } from "@/components/classroom";
-export default async function Page({
+async function DynamicContent({
   params,
 }: {
   params: Promise<{ path: string[] }>;
 }) {
   const { path } = await params;
   const [root, slug, detail] = path;
-  let content;
   if (root === "materi" || root === "belajar")
-    content = slug ? <Lesson key={slug} slug={slug} /> : <LearningWorld />;
-  else if (root === "kuis" && slug) content = <Quiz key={slug} slug={slug} />;
-  else if (root === "mini-games")
-    content = slug ? <MiniGame key={slug} slug={slug} /> : <MiniGames />;
-  else if (root === "tabunganku") content = <Savings />;
-  else if (root === "pencapaian") content = <Achievements />;
-  else if (root === "profil") content = <Profile />;
-  else if (root === "leaderboard") content = <Leaderboard />;
-  else if (root === "workbook") content = <Workbook />;
-  else if (root === "duel") content = <Duel />;
-  else if (root === "join") content = <Join />;
-  else if (root === "play" && slug) content = <Player code={slug} />;
-  else if (root === "tv" && slug)
-    content = <TVView code={slug} view={detail} />;
-  else if (root === "guru" && slug === "game" && detail === "buat")
-    content = <Setup />;
-  else if (root === "guru" && slug === "game" && detail)
-    content = <Controller code={detail} />;
-  else if (root === "guru") content = <Teacher section={slug} />;
-  else if (root === "admin") content = <Teacher section="admin" />;
-  else if (root === "tentang") content = <About />;
-  else notFound();
+    return slug ? <Lesson key={slug} slug={slug} /> : <LearningWorld />;
+  if (root === "kuis" && slug) return <Quiz key={slug} slug={slug} />;
+  if (root === "mini-games")
+    return slug ? <MiniGame key={slug} slug={slug} /> : <MiniGames />;
+  if (root === "tabunganku") return <Savings />;
+  if (root === "pencapaian") return <Achievements />;
+  if (root === "profil") return <Profile />;
+  if (root === "leaderboard") return <Leaderboard />;
+  if (root === "workbook") return <Workbook />;
+  if (root === "duel") return <Duel />;
+  if (root === "join") return <Join />;
+  if (root === "play" && slug) return <Player code={slug} />;
+  if (root === "tv" && slug) return <TVView code={slug} view={detail} />;
+  if (root === "guru" && slug === "game" && detail === "buat") return <Setup />;
+  if (root === "guru" && slug === "game" && detail)
+    return <Controller code={detail} />;
+  if (root === "guru") return <Teacher section={slug} />;
+  if (root === "admin") return <Teacher section="admin" />;
+  if (root === "tentang") return <About />;
+  notFound();
+}
+
+export default function Page({
+  params,
+}: {
+  params: Promise<{ path: string[] }>;
+}) {
   return (
     <Suspense
       fallback={
@@ -63,7 +67,7 @@ export default async function Page({
         </div>
       }
     >
-      {content}
+      <DynamicContent params={params} />
     </Suspense>
   );
 }
