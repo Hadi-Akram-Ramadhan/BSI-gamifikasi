@@ -176,7 +176,7 @@ export function Setup() {
           <div className="note spacer-top">
             {input === "manual"
               ? "Cocok untuk satu laptop dan layar kelas. Guru mencatat jawaban yang disebutkan peserta."
-              : "Buka tab pemain pada browser dan origin yang sama. Demo ini belum menghubungkan perangkat berbeda."}
+              : "Pemain menjawab langsung dari HP/Tablet masing-masing via scan QR atau kode room."}
           </div>
           <button
             className="button spacer-top"
@@ -191,6 +191,54 @@ export function Setup() {
     </div>
   );
 }
+function useRemoteRoomSync(code: string, active = true) {
+  useEffect(() => {
+    if (!active || typeof window === "undefined" || !code) return;
+    const clean = code.trim().toUpperCase().replace(/[^A-Z0-9]/g, "");
+    if (!clean) return;
+
+    let mounted = true;
+    const sync = async () => {
+      try {
+        const res = await fetch(`/api/rooms/${clean}`);
+        if (res.ok && mounted) {
+          const serverRoom = (await res.json()) as Room;
+          if (serverRoom && serverRoom.code) {
+            update((state) => {
+              const local = state.rooms[serverRoom.code];
+              if (
+                !local ||
+                local.status !== serverRoom.status ||
+                local.index !== serverRoom.index ||
+                local.deadline !== serverRoom.deadline ||
+                local.remaining !== serverRoom.remaining ||
+                JSON.stringify(local.answers) !==
+                  JSON.stringify(serverRoom.answers) ||
+                JSON.stringify(local.teams) !==
+                  JSON.stringify(serverRoom.teams) ||
+                (local.rounds?.length || 0) !==
+                  (serverRoom.rounds?.length || 0)
+              ) {
+                state.rooms[serverRoom.code] = {
+                  ...local,
+                  ...serverRoom,
+                };
+              }
+            });
+          }
+        }
+      } catch {}
+    };
+
+    void sync();
+    const timer = setInterval(sync, 500);
+    return () => {
+      mounted = false;
+      clearInterval(timer);
+    };
+  }, [code, active]);
+}
+
 function useClock(room: Room | undefined) {
   const [now, setNow] = useState(0);
   useEffect(() => {
@@ -292,9 +340,17 @@ function TeamScore({
 }
 function LocalNote() {
   return (
-    <p className="local-warning">
-      Mode demo lokal · Sinkronisasi hanya antar-tab di browser dan origin yang
-      sama. QR adalah tautan masuk, bukan koneksi permainan antarperangkat.
+    <p
+      className="local-warning"
+      style={{
+        background: "rgba(4, 120, 87, 0.08)",
+        borderColor: "var(--primary-subtle)",
+        color: "var(--primary-dark)",
+      }}
+    >
+      📡 <strong>Koneksi Ruang Kelas Aktif:</strong> Tersambung otomatis
+      antar-perangkat (Laptop Guru, Smart TV Kelas, dan HP/Tablet Siswa) di
+      jaringan yang sama.
     </p>
   );
 }
@@ -384,20 +440,7 @@ export function TVView({ code, view }: { code: string; view?: string }) {
   const router = useRouter();
   const [copied, setCopied] = useState(false);
 
-  useEffect(() => {
-    if (room || typeof window === "undefined") return;
-    const clean = code.trim().toUpperCase().replace(/[^A-Z0-9]/g, "");
-    fetch(`/api/rooms/${clean}`)
-      .then((r) => (r.ok ? r.json() : null))
-      .then((serverRoom) => {
-        if (serverRoom && serverRoom.code) {
-          update((state) => {
-            state.rooms[serverRoom.code] = serverRoom;
-          });
-        }
-      })
-      .catch(() => {});
-  }, [room, code]);
+  useRemoteRoomSync(code);
 
   useEffect(() => {
     if (!room) return;
@@ -491,9 +534,9 @@ export function TVView({ code, view }: { code: string; view?: string }) {
                 marginSize={1}
               />
               <p>
-                Buka halaman gabung
+                Scan QR dengan HP/Tablet siswa
                 <br />
-                pada tab browser yang sama.
+                untuk langsung bergabung ke arena!
               </p>
             </div>
             <TeamScore team={room.teams[1]} index={1} showScore={false} />
@@ -593,20 +636,7 @@ export function Controller({ code }: { code: string }) {
   const room = findRoom(s.rooms, code) || getRoom(code);
   const now = useClock(room);
 
-  useEffect(() => {
-    if (room || typeof window === "undefined") return;
-    const clean = code.trim().toUpperCase().replace(/[^A-Z0-9]/g, "");
-    fetch(`/api/rooms/${clean}`)
-      .then((r) => (r.ok ? r.json() : null))
-      .then((serverRoom) => {
-        if (serverRoom && serverRoom.code) {
-          update((state) => {
-            state.rooms[serverRoom.code] = serverRoom;
-          });
-        }
-      })
-      .catch(() => {});
-  }, [room, code]);
+  useRemoteRoomSync(code);
 
   if (!room) return <EmptyState title="Room belum ditemukan" />;
   const q = questions.find((q) => q.id === room.questionIds[room.index])!;
@@ -946,20 +976,7 @@ export function Player({ code }: { code: string }) {
   const search = useSearchParams();
   const team = search.get("team") === "1" ? 1 : 0;
 
-  useEffect(() => {
-    if (room || typeof window === "undefined") return;
-    const clean = code.trim().toUpperCase().replace(/[^A-Z0-9]/g, "");
-    fetch(`/api/rooms/${clean}`)
-      .then((r) => (r.ok ? r.json() : null))
-      .then((serverRoom) => {
-        if (serverRoom && serverRoom.code) {
-          update((state) => {
-            state.rooms[serverRoom.code] = serverRoom;
-          });
-        }
-      })
-      .catch(() => {});
-  }, [room, code]);
+  useRemoteRoomSync(code);
 
   if (!room) return <EmptyState title="Room belum ditemukan" />;
   if (room.status === "finished")

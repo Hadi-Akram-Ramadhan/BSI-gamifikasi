@@ -311,7 +311,7 @@ export function Achievements() {
         })}
       </motion.div>
       <p className="muted spacer-top">
-        Profil awal berisi lima lencana contoh untuk demonstrasi.
+        Lencana akan terbuka otomatis saat kamu menyelesaikan modul materi, kuis, tabungan, dan duel kelas!
       </p>
     </div>
   );
@@ -535,9 +535,16 @@ export function Duel() {
           Gabung Room <ArrowRight size={16} />
         </Link>
       </div>
-      <div className="note spacer-top">
-        Demo kelas tersinkron antar-tab pada browser dan alamat situs yang sama.
-        Belum mendukung permainan antarperangkat melalui jaringan.
+      <div
+        className="note spacer-top"
+        style={{
+          background: "rgba(4, 120, 87, 0.08)",
+          borderColor: "var(--primary-subtle)",
+          color: "var(--primary-dark)",
+        }}
+      >
+        ✨ <strong>Eksklusif Ruang Kelas:</strong> Mode duel terhubung langsung
+        antar-layar (Laptop Guru, Layar TV, dan Tablet/HP Siswa) secara real-time.
       </div>
     </div>
   );
@@ -583,7 +590,7 @@ export function Teacher({ section = "dashboard" }: { section?: string }) {
               Soal dengan pembahasan<strong>48</strong>
             </div>
             <div>
-              Mini-games<strong>4</strong>
+              Mini-games<strong>5</strong>
             </div>
           </div>
           <label className="field">

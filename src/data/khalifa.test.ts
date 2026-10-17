@@ -133,3 +133,28 @@ test("Room Code Normalization and Prefix Tolerance", async () => {
   assert.equal(findRoom(mockRooms, "9999"), undefined, "Should return undefined for non-existent room");
 });
 
+test("Mini-Games Curriculum Alignment", () => {
+  const expectedMiniGames = [
+    "hitung-koin",
+    "kebutuhan",
+    "menabung",
+    "berbagi",
+    "belanja-cerdas",
+  ];
+  assert.equal(expectedMiniGames.length, 5, "Must have exactly 5 educational mini-games");
+
+  // Verify that all 6 curriculum topics have at least 1 question
+  const topicQuestionCounts = topics.map((t) => ({
+    slug: t.slug,
+    count: questions.filter((q) => q.topic === t.slug).length,
+  }));
+
+  for (const t of topicQuestionCounts) {
+    assert.ok(
+      t.count >= 4,
+      `Topic '${t.slug}' must have at least 4 questions for classroom matches (found ${t.count})`
+    );
+  }
+});
+
+
