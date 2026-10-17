@@ -1,0 +1,101 @@
+version: 1
+project:
+  name: duel-cerdas
+  rootDir: ..
+artifacts:
+  rootDir: ui-evidence/screenshots
+  notesLanguage: en
+  reportLanguage: en
+  overviewViewport: desktop-1440
+capture:
+  baseUrl: http://127.0.0.1:3002
+  browser:
+    headless: true
+    freezeAnimations: true
+    waitForFonts: true
+    waitForNetworkIdleMs: 800
+  viewports:
+    - id: mobile-390
+      viewport: { width: 390, height: 844 }
+      locale: id-ID
+      timezoneId: Asia/Jakarta
+    - id: tablet-768
+      viewport: { width: 768, height: 1024 }
+      locale: id-ID
+      timezoneId: Asia/Jakarta
+    - id: desktop-1440
+      viewport: { width: 1440, height: 900 }
+      locale: id-ID
+      timezoneId: Asia/Jakarta
+    - id: tv-1920
+      viewport: { width: 1920, height: 1080 }
+      locale: id-ID
+      timezoneId: Asia/Jakarta
+    - id: tv-1280
+      viewport: { width: 1280, height: 720 }
+      locale: id-ID
+      timezoneId: Asia/Jakarta
+servers:
+  after:
+    baseUrl: http://127.0.0.1:3002
+    command: node node_modules/next/dist/bin/next start -p 3002 -H 127.0.0.1
+report:
+  language: en
+  checklist: [layout, spacing, interaction, accessibility]
+stages:
+  - id: primary-flow
+    title: Duel Cerdas playable demo
+    description: Learning, saving, and classroom gameplay across responsive viewports.
+    defaultViewports: [mobile-390, desktop-1440]
+    screens:
+      - id: home
+        label: Homepage
+        path: /
+        waitFor: { testId: home-hero }
+      - id: worlds
+        label: Learning worlds
+        path: /materi
+        waitFor: { testId: learning-world }
+      - id: lesson
+        label: Interactive lesson
+        path: /materi/kebutuhan-keinginan
+        waitFor: { testId: lesson }
+      - id: mini-game
+        label: Sort needs and wants
+        path: /mini-games/kebutuhan
+        waitFor: { testId: mini-game }
+      - id: quiz
+        label: Quiz question and answers
+        path: /kuis/kenal-uang
+        waitFor: { testId: quiz }
+      - id: duel
+        label: Duel selection
+        path: /duel
+        waitFor: { testId: duel-selection }
+      - id: savings
+        label: Savings simulation
+        path: /tabunganku
+        waitFor: { testId: savings }
+      - id: tv-lobby
+        label: Smart TV lobby
+        path: /tv/CERDAS42
+        hooks: { setup: "./ui-evidence/hooks/seed.mjs#default" }
+        waitFor: { testId: tv-lobby }
+      - id: tv-arena
+        label: Smart TV arena
+        path: /tv/CERDAS42/arena
+        hooks: { setup: "./ui-evidence/hooks/seed.mjs#default" }
+        waitFor: { testId: tv-arena }
+      - id: results
+        label: Game results
+        path: /tv/CERDAS42/hasil
+        hooks: { setup: "./ui-evidence/hooks/seed.mjs#default" }
+        waitFor: { testId: game-results }
+      - id: controller
+        label: Teacher controller
+        path: /guru/game/CERDAS42
+        hooks: { setup: "./ui-evidence/hooks/seed.mjs#default" }
+        waitFor: { testId: teacher-controller }
+runtime:
+  stateDir: ui-evidence/state
+  tempDir: ui-evidence/tmp

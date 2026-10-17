@@ -1,0 +1,145 @@
+{
+  "version": 1,
+  "kind": "snapshot-run",
+  "generatedAt": "2026-10-12T15:03:33.134Z",
+  "run": {
+    "id": "20261012-150333--verified-tv",
+    "label": "verified-tv",
+    "title": "Current UI Snapshot · verified-tv",
+    "description": "Current UI snapshot for 1 stage(s) and 3 selected screen(s).",
+    "selectionMode": "direct",
+    "baseUrl": "http://127.0.0.1:3002"
+  },
+  "scope": null,
+  "selection": [
+    {
+      "stageId": "primary-flow",
+      "stageTitle": "Duel Cerdas playable demo",
+      "screenIds": [
+        "tv-lobby",
+        "tv-arena",
+        "results"
+      ],
+      "screenLabels": [
+        "Smart TV lobby",
+        "Smart TV arena",
+        "Game results"
+      ],
+      "viewportIds": [
+        "tv-1920",
+        "tv-1280"
+      ]
+    }
+  ],
+  "artifacts": {
+    "notes": "ui-evidence/screenshots/snapshots/20261012-150333--verified-tv/notes.en.md",
+    "report": "ui-evidence/screenshots/snapshots/20261012-150333--verified-tv/report.en.md",
+    "manifest": "ui-evidence/screenshots/snapshots/20261012-150333--verified-tv/manifest.json",
+    "review": "ui-evidence/screenshots/snapshots/20261012-150333--verified-tv/review/index.html",
+    "current": [
+      "ui-evidence/screenshots/snapshots/20261012-150333--verified-tv/captures/primary-flow/tv-lobby__default__tv-1920__current.png",
+      "ui-evidence/screenshots/snapshots/20261012-150333--verified-tv/captures/primary-flow/tv-arena__default__tv-1920__current.png",
+      "ui-evidence/screenshots/snapshots/20261012-150333--verified-tv/captures/primary-flow/results__default__tv-1920__current.png",
+      "ui-evidence/screenshots/snapshots/20261012-150333--verified-tv/captures/primary-flow/tv-lobby__default__tv-1280__current.png",
+      "ui-evidence/screenshots/snapshots/20261012-150333--verified-tv/captures/primary-flow/tv-arena__default__tv-1280__current.png",
+      "ui-evidence/screenshots/snapshots/20261012-150333--verified-tv/captures/primary-flow/results__default__tv-1280__current.png"
+    ],
+    "overviews": [
+      "ui-evidence/screenshots/snapshots/20261012-150333--verified-tv/overview/primary-flow__tv-1920__snapshot-overview.png",
+      "ui-evidence/screenshots/snapshots/20261012-150333--verified-tv/overview/primary-flow__tv-1280__snapshot-overview.png"
+    ]
+  },
+  "bundle": {
+    "selfContained": true,
+    "origin": "snapshot-run"
+  },
+  "failures": [],
+  "captures": [
+    {
+      "stageId": "primary-flow",
+      "stageTitle": "Duel Cerdas playable demo",
+      "screenId": "tv-lobby",
+      "fileId": "tv-lobby",
+      "label": "Smart TV lobby",
+      "locale": "default",
+      "viewportId": "tv-1920",
+      "current": "ui-evidence/screenshots/snapshots/20261012-150333--verified-tv/captures/primary-flow/tv-lobby__default__tv-1920__current.png"
+    },
+    {
+      "stageId": "primary-flow",
+      "stageTitle": "Duel Cerdas playable demo",
+      "screenId": "tv-arena",
+      "fileId": "tv-arena",
+      "label": "Smart TV arena",
+      "locale": "default",
+      "viewportId": "tv-1920",
+      "current": "ui-evidence/screenshots/snapshots/20261012-150333--verified-tv/captures/primary-flow/tv-arena__default__tv-1920__current.png"
+    },
+    {
+      "stageId": "primary-flow",
+      "stageTitle": "Duel Cerdas playable demo",
+      "screenId": "results",
+      "fileId": "results",
+      "label": "Game results",
+      "locale": "default",
+      "viewportId": "tv-1920",
+      "current": "ui-evidence/screenshots/snapshots/20261012-150333--verified-tv/captures/primary-flow/results__default__tv-1920__current.png"
+    },
+    {
+      "stageId": "primary-flow",
+      "stageTitle": "Duel Cerdas playable demo",
+      "screenId": "tv-lobby",
+      "fileId": "tv-lobby",
+      "label": "Smart TV lobby",
+      "locale": "default",
+      "viewportId": "tv-1280",
+      "current": "ui-evidence/screenshots/snapshots/20261012-150333--verified-tv/captures/primary-flow/tv-lobby__default__tv-1280__current.png"
+    },
+    {
+      "stageId": "primary-flow",
+      "stageTitle": "Duel Cerdas playable demo",
+      "screenId": "tv-arena",
+      "fileId": "tv-arena",
+      "label": "Smart TV arena",
+      "locale": "default",
+      "viewportId": "tv-1280",
+      "current": "ui-evidence/screenshots/snapshots/20261012-150333--verified-tv/captures/primary-flow/tv-arena__default__tv-1280__current.png"
+    },
+    {
+      "stageId": "primary-flow",
+      "stageTitle": "Duel Cerdas playable demo",
+      "screenId": "results",
+      "fileId": "results",
+      "label": "Game results",
+      "locale": "default",
+      "viewportId": "tv-1280",
+      "current": "ui-evidence/screenshots/snapshots/20261012-150333--verified-tv/captures/primary-flow/results__default__tv-1280__current.png"
+    }
+  ],
+  "overviewEntries": [
+    {
+      "stageId": "primary-flow",
+      "stageTitle": "Duel Cerdas playable demo",
+      "viewportId": "tv-1920",
+      "path": "ui-evidence/screenshots/snapshots/20261012-150333--verified-tv/overview/primary-flow__tv-1920__snapshot-overview.png"
+    },
+    {
+      "stageId": "primary-flow",
+      "stageTitle": "Duel Cerdas playable demo",
+      "viewportId": "tv-1280",
+      "path": "ui-evidence/screenshots/snapshots/20261012-150333--verified-tv/overview/primary-flow__tv-1280__snapshot-overview.png"
+    }
+  ],
+  "commands": {
+    "rerun": "ui-evidence snapshot --config ui-evidence/config.yaml --stage primary-flow --screens tv-lobby,tv-arena,results --viewports tv-1920,tv-1280 --label verified-tv",
+    "rebuild": "ui-evidence snapshot --config ui-evidence/config.yaml --stage primary-flow --screens tv-lobby,tv-arena,results --viewports tv-1920,tv-1280 --label verified-tv"
+  },
+  "counts": {
+    "stages": 1,
+    "screens": 3,
+    "expectedCaptures": 6,
+    "captures": 6,
+    "overviews": 2,
+    "failedCaptures": 0
+  }
+}

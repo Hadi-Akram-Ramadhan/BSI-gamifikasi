@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="256" height="256">
+  <title>KHALIFA - Concept A (K-Barakah)</title>
+  <!-- Upright Barakah Pillar (Amanah) -->
+  <rect x="44" y="32" width="34" height="192" rx="17" fill="#111827"/>
+  <!-- Upper Ascending Sprout (Growth & Aspiration) -->
+  <path d="M 88 126 C 104 110 128 70 178 44 C 196 34 212 42 212 58 C 212 76 198 100 176 116 C 146 138 116 148 94 148 Z" fill="#111827"/>
+  <!-- Lower Crescent Wave (Hilal Barakah) -->
+  <path d="M 88 136 C 114 148 144 176 172 208 C 182 220 174 228 160 228 C 138 228 116 208 98 184 C 86 168 84 148 88 136 Z" fill="#111827"/>
+  <!-- 8-Pointed Rub el Hizb Star of Excellence -->
+  <path d="M 178.0 106.0 L 181.8 116.8 L 192.1 111.9 L 187.2 122.2 L 198.0 126.0 L 187.2 129.8 L 192.1 140.1 L 181.8 135.2 L 178.0 146.0 L 174.2 135.2 L 163.9 140.1 L 168.8 129.8 L 158.0 126.0 L 168.8 122.2 L 163.9 111.9 L 174.2 116.8 Z" fill="#111827"/>
+</svg>

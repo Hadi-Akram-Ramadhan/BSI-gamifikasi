@@ -1,0 +1,136 @@
+name: CI/CD Pipeline - KHALIFA
+
+on:
+  push:
+    branches:
+      - main
+      - hadooyy
+    tags:
+      - "v*"
+  pull_request:
+    branches:
+      - main
+      - hadooyy
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # ==========================================
+  # 1. FRONTEND CI (Next.js 16 + TypeScript)
+  # ==========================================
+  frontend-ci:
+    name: Frontend (Lint, Test, Build)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: "npm"
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Run ESLint
+        run: npm run lint
+
+      - name: Run Unit Tests
+        run: npm test
+
+      - name: Build Next.js Production Bundle
+        run: npm run build
+        env:
+          NEXT_TELEMETRY_DISABLED: "1"
+
+  # ==========================================
+  # 2. BACKEND CI (Go 1.24 WebSocket & API)
+  # ==========================================
+  backend-ci:
+    name: Backend (Vet, Race Test, Build)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: server
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Go 1.24
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.24"
+          cache: true
+          cache-dependency-path: server/go.sum
+
+      - name: Download Go Modules
+        run: go mod download
+
+      - name: Run Go Vet
+        run: go vet ./...
+
+      - name: Run Unit & Concurrency Tests (-race)
+        run: go test -v -race ./...
+
+      - name: Build Go Server Binary
+        run: go build -v -o bin/server ./cmd/server
+
+  # ==========================================
+  # 3. CD / DEPLOY STAGE
+  # ==========================================
+  deploy:
+    name: Deploy to Server
+    needs: [frontend-ci, backend-ci]
+    runs-on: ubuntu-latest
+    # Deploy only on push to main or hadooyy (not on Pull Requests)
+    if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/hadooyy')
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Check Deployment Secrets
+        id: check-secrets
+        run: |
+          if [ -n "${{ secrets.SERVER_HOST }}" ] && [ -n "${{ secrets.SERVER_USER }}" ] && [ -n "${{ secrets.SERVER_SSH_KEY }}" ]; then
+            echo "configured=true" >> $GITHUB_OUTPUT
+            echo "✅ Deployment secrets detected. Proceeding with automated deployment..."
+          else
+            echo "configured=false" >> $GITHUB_OUTPUT
+            echo "⚠️ Deployment secrets (SERVER_HOST, SERVER_USER, SERVER_SSH_KEY) not found. Skipping live remote deploy step."
+          fi
+
+      - name: Deploy via SSH to Production Server
+        if: steps.check-secrets.outputs.configured == 'true'
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SERVER_SSH_KEY }}
+          port: ${{ secrets.SERVER_PORT || 22 }}
+          script: |
+            echo "🚀 Deploying KHALIFA to production server..."
+            cd ${{ secrets.SERVER_DEPLOY_PATH || '/var/www/bsi-gamifikasi' }}
+            git pull origin ${{ github.ref_name }}
+
+            # Restart or rebuild containers
+            if [ -f "docker-compose.yml" ]; then
+              docker compose down
+              docker compose up -d --build
+            fi
+
+            echo "✅ Deployment completed successfully!"
+
+      - name: Deployment Summary
+        run: |
+          echo "=================================================="
+          echo "🎉 KHALIFA CI/CD Pipeline Summary"
+          echo "Commit: ${{ github.sha }}"
+          echo "Branch: ${{ github.ref_name }}"
+          echo "Frontend & Backend Tests: PASSED"
+          echo "Status: Ready for Production"
+          echo "=================================================="

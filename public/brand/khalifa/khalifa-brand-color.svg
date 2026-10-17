@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="256" height="256">
+  <title>KHALIFA - Brand Mark (Color)</title>
+  <defs>
+    <linearGradient id="bsiTeal" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#00A39E"/>
+      <stop offset="100%" stop-color="#047857"/>
+    </linearGradient>
+    <linearGradient id="bsiGold" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FBBF24"/>
+      <stop offset="100%" stop-color="#D97706"/>
+    </linearGradient>
+  </defs>
+  <!-- Upright Barakah Pillar (Amanah) -->
+  <rect x="44" y="32" width="34" height="192" rx="17" fill="url(#bsiTeal)"/>
+  <!-- Upper Ascending Sprout (Growth & Aspiration) -->
+  <path d="M 88 126 C 104 110 128 70 178 44 C 196 34 212 42 212 58 C 212 76 198 100 176 116 C 146 138 116 148 94 148 Z" fill="#10B981"/>
+  <!-- Lower Crescent Wave (Hilal Barakah) -->
+  <path d="M 88 136 C 114 148 144 176 172 208 C 182 220 174 228 160 228 C 138 228 116 208 98 184 C 86 168 84 148 88 136 Z" fill="url(#bsiTeal)"/>
+  <!-- 8-Pointed Rub el Hizb Star of Excellence (Gold) -->
+  <path d="M 178 106 L 181.8 119.2 L 192.1 110.1 L 187.2 122.9 L 200.7 121.7 L 190.4 130.8 L 202.1 137.9 L 188.7 139.1 L 193.6 151.9 L 183.3 142.8 L 178 156 L 172.7 142.8 L 162.4 151.9 L 167.3 139.1 L 153.9 137.9 L 165.6 130.8 L 155.3 121.7 L 168.8 122.9 L 163.9 110.1 L 174.2 119.2 Z" fill="url(#bsiGold)"/>
+</svg>
