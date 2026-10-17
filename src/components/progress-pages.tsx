@@ -835,8 +835,8 @@ export function Teacher({ section = "dashboard" }: { section?: string }) {
           <div className="paper">
             <h2>
               {section === "laporan"
-                ? "Progres profil demo"
-                : "Jejak belajar Ahmad"}
+                ? "Progres Belajar Kelas"
+                : "Jejak Belajar Mandiri"}
             </h2>
             <p className="muted spacer-top">
               Progres ini mengikuti aktivitas profil pada browser ini.

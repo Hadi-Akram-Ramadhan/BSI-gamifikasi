@@ -305,48 +305,72 @@ export function Home() {
       <div className="page-container home-content">
         <SchoolPartnerBar />
         <section className="welcome-panel">
-          <div className="welcome-person">
-            <span className="avatar-large">
-              {["👦🏻", "👧🏻", "🧕🏻", "👦🏽"][s.avatar]}
-            </span>
-            <div>
-              <h2>
-                Halo, {s.name}! <span className="wave-hand">✦</span>
-              </h2>
-              <p>Siap menambah cerita hebat hari ini?</p>
+          {s.xp > 0 ? (
+            <>
+              <div className="welcome-person">
+                <span className="avatar-large">
+                  {["👦🏻", "👧🏻", "🧕🏻", "👦🏽"][s.avatar]}
+                </span>
+                <div>
+                  <h2>
+                    Halo, {s.name || "Petualang Cerdas"}! <span className="wave-hand">✦</span>
+                  </h2>
+                  <p>Siap melanjutkan petualangan hebat hari ini?</p>
+                </div>
+              </div>
+              <div className="welcome-progress">
+                <div>
+                  <strong>
+                    Level {Math.floor(s.xp / 500) + 1}{" "}
+                    <span>Penjelajah Cerdas</span>
+                  </strong>
+                  <small>{s.xp % 500} / 500 XP</small>
+                </div>
+                <Progress value={(s.xp % 500) / 5} />
+              </div>
+              <div className="welcome-stat">
+                <Star fill="#ffbf47" color="#d99721" />
+                <strong>
+                  {s.stars}
+                  <small>Bintang</small>
+                </strong>
+              </div>
+              <div className="welcome-stat">
+                <Trophy color="#e39d39" />
+                <strong>
+                  {s.badges.length}
+                  <small>Lencana</small>
+                </strong>
+              </div>
+              <Link
+                className="welcome-continue"
+                href="/materi"
+                aria-label="Lanjut belajar"
+              >
+                <ChevronRight />
+              </Link>
+            </>
+          ) : (
+            <div className="zero-friction-hero">
+              <div className="zero-friction-copy">
+                <span className="partner-badge-kicker" style={{ fontSize: "11px", padding: "4px 10px" }}>
+                  <Sparkles size={13} /> Akses Langsung · Tanpa Akun / Login
+                </span>
+                <h2>Masuk Kelas atau Mulai Petualangan</h2>
+                <p>
+                  Siswa dan guru SDN 02 Jember Kidul dapat langsung bergabung ke arena Smart TV kuis dengan kode room atau langsung belajar mandiri.
+                </p>
+              </div>
+              <div className="zero-friction-actions">
+                <Link href="/join" className="button">
+                  <Swords size={18} /> Masukkan PIN Room
+                </Link>
+                <Link href="/materi" className="button button-white">
+                  <BookOpen size={18} /> Jelajah 6 Dunia
+                </Link>
+              </div>
             </div>
-          </div>
-          <div className="welcome-progress">
-            <div>
-              <strong>
-                Level {Math.floor(s.xp / 500) + 1}{" "}
-                <span>Penjelajah Cerdas</span>
-              </strong>
-              <small>{s.xp % 500} / 500 XP</small>
-            </div>
-            <Progress value={(s.xp % 500) / 5} />
-          </div>
-          <div className="welcome-stat">
-            <Star fill="#ffbf47" color="#d99721" />
-            <strong>
-              {s.stars}
-              <small>Bintang</small>
-            </strong>
-          </div>
-          <div className="welcome-stat">
-            <Trophy color="#e39d39" />
-            <strong>
-              {s.badges.length}
-              <small>Lencana</small>
-            </strong>
-          </div>
-          <Link
-            className="welcome-continue"
-            href="/materi/kebutuhan-keinginan"
-            aria-label="Lanjut belajar"
-          >
-            <ChevronRight />
-          </Link>
+          )}
         </section>
         <KhalifaPillars />
         <section className="world-section">

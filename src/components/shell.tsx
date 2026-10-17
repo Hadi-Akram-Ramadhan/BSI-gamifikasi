@@ -9,6 +9,7 @@ import {
   Star,
   ChevronRight,
   GraduationCap,
+  Swords,
   VolumeX,
   Volume2,
   Wallet,
@@ -98,23 +99,33 @@ export function Shell({ children }: { children: React.ReactNode }) {
               ))}
             </nav>
             <div className="header-player">
-              <Link href="/pencapaian" className="star-counter">
-                <Star size={19} fill="currentColor" />
-                <AnimatedCounter value={s.stars} />
-              </Link>
-              <span className="header-divider" />
-              <Link
-                href="/profil"
-                className="avatar-small"
-                aria-label="Buka profil"
-              >
-                {["👦🏻", "👧🏻", "🧕🏻", "👦🏽"][s.avatar]}
-              </Link>
-              <Link href="/profil" className="player-name">
-                {s.name}
-                <small>Level {Math.floor(s.xp / 500) + 1}</small>
-              </Link>
-              <ChevronRight size={16} />
+              {s.stars > 0 && (
+                <Link href="/pencapaian" className="star-counter" aria-label="Koleksi bintang">
+                  <Star size={19} fill="currentColor" />
+                  <AnimatedCounter value={s.stars} />
+                </Link>
+              )}
+              {s.xp > 0 ? (
+                <>
+                  <span className="header-divider" />
+                  <Link
+                    href="/profil"
+                    className="avatar-small"
+                    aria-label="Buka profil"
+                  >
+                    {["👦🏻", "👧🏻", "🧕🏻", "👦🏽"][s.avatar]}
+                  </Link>
+                  <Link href="/profil" className="player-name">
+                    {s.name || "Petualang"}
+                    <small>Level {Math.floor(s.xp / 500) + 1}</small>
+                  </Link>
+                  <ChevronRight size={16} />
+                </>
+              ) : (
+                <Link href="/join" className="button button-small" style={{ minHeight: "38px", padding: "8px 16px" }}>
+                  <Swords size={16} /> Masuk Kuis
+                </Link>
+              )}
             </div>
           </div>
         </header>

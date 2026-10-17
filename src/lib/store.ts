@@ -46,25 +46,22 @@ export type AppState = {
   }[];
 };
 export const initial: AppState = {
-  name: "Ahmad",
+  name: "",
   avatar: 0,
-  xp: 2350,
-  stars: 24,
-  completed: ["kenal-uang"],
-  rewards: ["lesson-kenal-uang"],
-  badges: [0, 1, 2, 3, 5],
-  savings: 14000,
+  xp: 0,
+  stars: 0,
+  completed: [],
+  rewards: [],
+  badges: [],
+  savings: 0,
   target: 100000,
-  goal: "Buku cerita impianku",
-  deposits: Array.from({ length: 7 }, (_, i) => ({
-    amount: 2000,
-    date: `2026-10-${String(i + 1).padStart(2, "0")}T08:00:00+07:00`,
-  })),
+  goal: "Buku Cerita Impian",
+  deposits: [],
   savingsMilestones: [],
   rooms: {},
   matches: [],
 };
-const KEY = "duel-cerdas-v1";
+const KEY = "khalifa-app-v2";
 let cached: AppState = initial;
 let loaded = false;
 let channel: BroadcastChannel | undefined;
