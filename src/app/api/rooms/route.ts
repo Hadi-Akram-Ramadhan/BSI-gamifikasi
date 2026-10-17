@@ -1,18 +1,9 @@
 import { NextResponse } from "next/server";
 import type { Room } from "@/lib/store";
-
-// In-memory room store shared across devices on this server
-type GlobalRoomRegistry = {
-  _khalifaRooms?: Map<string, Room>;
-};
-
-const g = globalThis as unknown as GlobalRoomRegistry;
-if (!g._khalifaRooms) {
-  g._khalifaRooms = new Map();
-}
-const roomsMap = g._khalifaRooms;
+import { getGlobalRoomsMap } from "@/lib/room";
 
 export async function GET() {
+  const roomsMap = getGlobalRoomsMap<Room>();
   const list = Array.from(roomsMap.values());
   return NextResponse.json({ count: list.length, rooms: list });
 }
@@ -27,6 +18,7 @@ export async function POST(req: Request) {
       );
     }
     const clean = room.code.trim().toUpperCase();
+    const roomsMap = getGlobalRoomsMap<Room>();
     roomsMap.set(clean, room);
     return NextResponse.json({ success: true, code: clean });
   } catch {
