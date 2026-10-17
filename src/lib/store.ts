@@ -64,6 +64,7 @@ export const initial: AppState = {
 const KEY = "khalifa-app-v2";
 let cached: AppState = initial;
 let loaded = false;
+let hydrated = false;
 let channel: BroadcastChannel | undefined;
 const listeners = new Set<() => void>();
 function read(): AppState {
@@ -88,7 +89,6 @@ function emit() {
 function setup() {
   if (loaded || typeof window === "undefined") return;
   loaded = true;
-  cached = read();
   window.addEventListener("storage", (e) => {
     if (e.key === KEY) {
       cached = read();
@@ -106,6 +106,13 @@ function setup() {
 function subscribe(fn: () => void) {
   setup();
   listeners.add(fn);
+  if (!hydrated && typeof window !== "undefined") {
+    hydrated = true;
+    queueMicrotask(() => {
+      cached = read();
+      emit();
+    });
+  }
   return () => {
     listeners.delete(fn);
   };
@@ -119,6 +126,7 @@ export function useStore() {
 }
 export function update(fn: (s: AppState) => void) {
   setup();
+  hydrated = true;
   const next = read();
   const before = { xp: next.xp, stars: next.stars, badges: [...next.badges] };
   fn(next);

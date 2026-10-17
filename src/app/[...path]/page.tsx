@@ -1,5 +1,7 @@
 import { Suspense } from "react";
 import { notFound } from "next/navigation";
+
+export const instant = false;
 import {
   LearningWorld,
   Lesson,
