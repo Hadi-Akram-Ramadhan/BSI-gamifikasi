@@ -1,36 +1,14 @@
 import { NextResponse } from "next/server";
 import type { Room } from "@/lib/store";
-
-type GlobalRoomRegistry = {
-  _khalifaRooms?: Map<string, Room>;
-};
-
-const g = globalThis as unknown as GlobalRoomRegistry;
-const roomsMap = g._khalifaRooms || new Map<string, Room>();
-
-function findInMap(inputCode: string): Room | undefined {
-  const clean = inputCode.trim().toUpperCase().replace(/[^A-Z0-9]/g, "");
-  if (!clean) return undefined;
-  if (roomsMap.has(clean)) return roomsMap.get(clean);
-  if (roomsMap.has(`CERDAS${clean}`)) return roomsMap.get(`CERDAS${clean}`);
-
-  const withoutPrefix = clean.replace(/^CERDAS/, "");
-  for (const [key, room] of roomsMap.entries()) {
-    const keyClean = key.replace(/[^A-Z0-9]/g, "");
-    if (keyClean === clean) return room;
-    if (withoutPrefix && keyClean.replace(/^CERDAS/, "") === withoutPrefix) {
-      return room;
-    }
-  }
-  return undefined;
-}
+import { getGlobalRoomsMap, findRoomInMap } from "@/lib/room";
 
 export async function GET(
   _req: Request,
   { params }: { params: Promise<{ code: string }> },
 ) {
   const { code } = await params;
-  const room = findInMap(code);
+  const roomsMap = getGlobalRoomsMap<Room>();
+  const room = findRoomInMap(roomsMap, code);
   if (!room) {
     return NextResponse.json(
       { error: "Room tidak ditemukan" },
@@ -54,6 +32,7 @@ export async function POST(
       );
     }
     const clean = (updated.code || code).trim().toUpperCase();
+    const roomsMap = getGlobalRoomsMap<Room>();
     roomsMap.set(clean, updated);
     return NextResponse.json({ success: true, code: clean });
   } catch {

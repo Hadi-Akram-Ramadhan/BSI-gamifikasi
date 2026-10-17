@@ -131,6 +131,13 @@ test("Room Code Normalization and Prefix Tolerance", async () => {
 
   // Non-existent room
   assert.equal(findRoom(mockRooms, "9999"), undefined, "Should return undefined for non-existent room");
+
+  // Also test Map-based lookups for server route handler
+  const { findRoomInMap } = await import("../lib/room.ts");
+  const mapRooms = new Map(Object.entries(mockRooms));
+  assert.ok(findRoomInMap(mapRooms, "CERDAS4K9A"), "Map should match exact code CERDAS4K9A");
+  assert.ok(findRoomInMap(mapRooms, "4k9a"), "Map should match short suffix 4k9a");
+  assert.equal(findRoomInMap(mapRooms, "9999"), undefined, "Map should return undefined for missing code");
 });
 
 test("Mini-Games Curriculum Alignment", () => {
