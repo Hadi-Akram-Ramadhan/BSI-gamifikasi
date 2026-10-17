@@ -4,7 +4,6 @@ import {
   ArrowRight,
   BookOpen,
   Check,
-  ChevronRight,
   Flag,
   Gamepad2,
   GraduationCap,
@@ -12,7 +11,6 @@ import {
   Sparkles,
   Star,
   Swords,
-  Trophy,
   Users,
 } from "lucide-react";
 import { useStore } from "@/lib/store";
@@ -305,70 +303,48 @@ export function Home() {
       <div className="page-container home-content">
         <SchoolPartnerBar />
         <section className="welcome-panel">
-          {s.xp > 0 ? (
-            <>
-              <div className="welcome-person">
-                <span className="avatar-large">
-                  {["👦🏻", "👧🏻", "🧕🏻", "👦🏽"][s.avatar]}
-                </span>
-                <div>
-                  <h2>
-                    Halo, {s.name || "Petualang Cerdas"}! <span className="wave-hand">✦</span>
-                  </h2>
-                  <p>Siap melanjutkan petualangan hebat hari ini?</p>
-                </div>
-              </div>
-              <div className="welcome-progress">
-                <div>
-                  <strong>
-                    Level {Math.floor(s.xp / 500) + 1}{" "}
-                    <span>Penjelajah Cerdas</span>
-                  </strong>
-                  <small>{s.xp % 500} / 500 XP</small>
-                </div>
-                <Progress value={(s.xp % 500) / 5} />
-              </div>
-              <div className="welcome-stat">
-                <Star fill="#ffbf47" color="#d99721" />
-                <strong>
-                  {s.stars}
-                  <small>Bintang</small>
-                </strong>
-              </div>
-              <div className="welcome-stat">
-                <Trophy color="#e39d39" />
-                <strong>
-                  {s.badges.length}
-                  <small>Lencana</small>
-                </strong>
-              </div>
-              <Link
-                className="welcome-continue"
-                href="/materi"
-                aria-label="Lanjut belajar"
-              >
-                <ChevronRight />
+          <div className="zero-friction-hero">
+            <div className="zero-friction-copy">
+              <span className="partner-badge-kicker" style={{ fontSize: "11px", padding: "4px 10px" }}>
+                <Sparkles size={13} /> Akses Terbuka · Tanpa Akun / Login
+              </span>
+              <h2>Portal Pembelajaran & Arena Kuis SDN 02 Jember Kidul</h2>
+              <p>
+                Siswa dan guru dapat langsung bergabung ke arena Smart TV kuis menggunakan PIN room atau langsung menjelajahi 6 dunia edukasi finansial syariah.
+              </p>
+            </div>
+            <div className="zero-friction-actions">
+              <Link href="/join" className="button">
+                <Swords size={18} /> Masukkan PIN Room
               </Link>
-            </>
-          ) : (
-            <div className="zero-friction-hero">
-              <div className="zero-friction-copy">
-                <span className="partner-badge-kicker" style={{ fontSize: "11px", padding: "4px 10px" }}>
-                  <Sparkles size={13} /> Akses Langsung · Tanpa Akun / Login
+              <Link href="/materi" className="button button-white">
+                <BookOpen size={18} /> Jelajah 6 Dunia
+              </Link>
+            </div>
+          </div>
+          {s.stars > 0 && (
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+                padding: "12px 20px",
+                background: "rgba(255, 255, 255, 0.88)",
+                borderRadius: "14px",
+                marginTop: "14px",
+                border: "1px solid var(--border)",
+                gap: "12px",
+              }}
+            >
+              <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                <Star fill="#ffbf47" color="#d99721" size={20} />
+                <span style={{ fontSize: "14px", fontWeight: 600 }}>
+                  Aktivitas di Perangkat Ini: {s.stars} Bintang · {s.badges.length} Lencana
                 </span>
-                <h2>Masuk Kelas atau Mulai Petualangan</h2>
-                <p>
-                  Siswa dan guru SDN 02 Jember Kidul dapat langsung bergabung ke arena Smart TV kuis dengan kode room atau langsung belajar mandiri.
-                </p>
               </div>
-              <div className="zero-friction-actions">
-                <Link href="/join" className="button">
-                  <Swords size={18} /> Masukkan PIN Room
-                </Link>
-                <Link href="/materi" className="button button-white">
-                  <BookOpen size={18} /> Jelajah 6 Dunia
-                </Link>
-              </div>
+              <Link href="/pencapaian" className="text-link" style={{ fontSize: "13px" }}>
+                Koleksi Prestasi <ArrowRight size={14} />
+              </Link>
             </div>
           )}
         </section>

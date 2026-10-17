@@ -7,7 +7,6 @@ import {
   House,
   Trophy,
   Star,
-  ChevronRight,
   GraduationCap,
   Swords,
   VolumeX,
@@ -105,27 +104,9 @@ export function Shell({ children }: { children: React.ReactNode }) {
                   <AnimatedCounter value={s.stars} />
                 </Link>
               )}
-              {s.xp > 0 ? (
-                <>
-                  <span className="header-divider" />
-                  <Link
-                    href="/profil"
-                    className="avatar-small"
-                    aria-label="Buka profil"
-                  >
-                    {["👦🏻", "👧🏻", "🧕🏻", "👦🏽"][s.avatar]}
-                  </Link>
-                  <Link href="/profil" className="player-name">
-                    {s.name || "Petualang"}
-                    <small>Level {Math.floor(s.xp / 500) + 1}</small>
-                  </Link>
-                  <ChevronRight size={16} />
-                </>
-              ) : (
-                <Link href="/join" className="button button-small" style={{ minHeight: "38px", padding: "8px 16px" }}>
-                  <Swords size={16} /> Masuk Kuis
-                </Link>
-              )}
+              <Link href="/join" className="button button-small" style={{ minHeight: "38px", padding: "8px 16px" }}>
+                <Swords size={16} /> Masuk Kuis
+              </Link>
             </div>
           </div>
         </header>
@@ -135,17 +116,15 @@ export function Shell({ children }: { children: React.ReactNode }) {
           <GraduationCap size={20} />
           <strong>Ruang Guru</strong>
           {[
-            ["dashboard", "Ringkasan"],
-            ["kelas", "Kelas"],
-            ["laporan", "Laporan"],
-            ["soal", "Bank soal"],
+            ["dashboard", "SOP & Ringkasan"],
+            ["soal", "Bank Soal"],
+            ["laporan", "Laporan Literasi"],
           ].map(([slug, label]) => (
             <Link key={slug} href={`/guru/${slug}`}>
               {label}
             </Link>
           ))}
-          <Link href="/admin">Admin</Link>
-          <span>Data demo</span>
+          <Link href="/workbook">Workbook</Link>
         </nav>
       )}
       <main id="main-content" className={cn(immersive && "immersive-main")}>

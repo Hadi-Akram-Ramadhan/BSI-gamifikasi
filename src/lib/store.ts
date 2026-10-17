@@ -309,9 +309,9 @@ export async function gameAction(code: string, action: GameAction) {
           t.players =
             r.mode === "team"
               ? i === 0
-                ? ["Ahmad", "Siti"]
-                : ["Budi", "Aisyah"]
-              : [i === 0 ? "Ahmad" : "Budi"];
+                ? ["Regu Hijau 1", "Regu Hijau 2"]
+                : ["Regu Oranye 1", "Regu Oranye 2"]
+              : [i === 0 ? "Pemain Hijau" : "Pemain Oranye"];
           if (r.mode === "individual") t.name = t.players[0];
         });
       if (
